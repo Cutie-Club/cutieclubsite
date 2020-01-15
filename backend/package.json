@@ -2,7 +2,18 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "backend for cutie club website",
-  "main": "index.js",
+  "main": "server.js",
   "author": "Amber Holly",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mariadb": "^2.1.5"
+  },
+  "scripts": {
+    "prod:start": "node server.js",
+    "dev:start": "nodemon server.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
+  }
 }
