@@ -1,0 +1,8 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "frontend for cutie club website",
+  "main": "index.js",
+  "author": "Amber Holly",
+  "license": "Apache-2.0"
+}
