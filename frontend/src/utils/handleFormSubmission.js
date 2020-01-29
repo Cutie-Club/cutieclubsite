@@ -1,12 +1,12 @@
-function handleFormSubmission(event, action) {
+function handleFormSubmission(formElement, action, method) {
   // prevent default action (redirect) from happening
-  event.preventDefault();
+  // event.preventDefault();
 
   return new Promise((resolve, reject) => {
     // setup a FormData object using the form in App
-    const form = new FormData(event.target);
+    const form = new FormData(formElement);
     // clear form now we have extracted data
-    event.target.reset();
+    formElement.reset();
     // create a request to perform our http method with
     const request = new XMLHttpRequest();
 
@@ -26,7 +26,7 @@ function handleFormSubmission(event, action) {
     };
 
     // create a new POST request
-    request.open("POST", action);
+    request.open(method, action);
     // set request headers
     request.setRequestHeader("Content-Type", "application/json");
     // send a request with some data

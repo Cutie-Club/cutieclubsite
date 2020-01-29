@@ -1,10 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../Button/Button.js";
+import Input from "../Input/Input.js";
+import Form from "../Form/Form.js";
 import "./Table.css";
 
 function Table(props) {
+  const [editing, setEditing] = useState({});
+
   let tableHeader = [];
   let tableContent = [];
+
+  // sets all items editing states to false
+  useEffect(() => {
+    let populatedEditing = {};
+    if (props.json) {
+      props.json.rows.forEach(item => {
+        populatedEditing[item.id] = false;
+      });
+    }
+    setEditing(populatedEditing);
+  }, [props.json]);
 
   if (props.json) {
     let jsonKeys = [];
@@ -31,28 +46,92 @@ function Table(props) {
     props.json.rows.forEach((item, i) => {
       let tableRow = [];
       headers.forEach((columnName, i) => {
-        tableRow.push(<td key={i}>{item[columnName] || "❔"}</td>);
+        let rowContent = item[columnName] || "❔";
+        if (editing[item.id] && !(columnName === "id")) {
+          rowContent = (
+            <Input
+              name={columnName}
+              required={true}
+              initialValue={item[columnName]}
+              form="editedRow"
+            />
+          );
+        }
+
+        tableRow.push(<td key={i}>{rowContent}</td>);
       });
+
+      let actionButtons = (
+        <td>
+          <Button
+            text="Edit"
+            cssclass="primary"
+            disabled={Object.values(editing).includes(true)}
+            onClick={event => {
+              event.preventDefault();
+              // clone editing into a new object:
+              // we have to spreader it to clone it
+              // otherwise it will not detect a difference
+              // and not re-render
+              let newEditing = { ...editing };
+              // set the editing state of the current items id to true
+              newEditing[item.id] = true;
+              // update editing
+              setEditing(newEditing);
+            }}
+          />
+          <Button
+            // key="deleteButton"
+            text="Delete"
+            cssclass="danger"
+            disabled={Object.values(editing).includes(true)}
+            onClick={event => {
+              event.preventDefault();
+              props.delete(event, item.id);
+            }}
+          />
+        </td>
+      );
+
+      if (editing[item.id]) {
+        actionButtons = (
+          <td>
+            <Button
+              cssclass="accept"
+              type="submit"
+              text="Save"
+              form="editedRow"
+              onClick={event => {
+                event.preventDefault();
+                console.log("PRESSED");
+                props.edit(event, item.id);
+              }}
+            />
+            <Button
+              cssclass="warning"
+              text="Discard"
+              onClick={event => {
+                event.preventDefault();
+                let newEditing = { ...editing };
+                newEditing[item.id] = false;
+                setEditing(newEditing);
+              }}
+            />
+          </td>
+        );
+      }
 
       tableContent.push(
         <tr key={i}>
           {tableRow}
-          <td>
-            <Button text="Edit" onClick={props.edit} />
-            <Button
-              text="Delete"
-              onClick={event => {
-                props.delete(event, item.id);
-              }}
-            />
-          </td>
+          {actionButtons}
         </tr>
       );
     });
   }
-
   return (
     <>
+      <Form id="editedRow" />
       <table>
         <thead>
           <tr>{tableHeader}</tr>

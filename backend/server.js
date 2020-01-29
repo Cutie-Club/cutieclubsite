@@ -99,8 +99,26 @@ app.delete("/products/:id", (req, res) => {
   pool
     .query("DELETE FROM products WHERE id = (?)", [req.params.id])
     .then(queryResult => {
-      let newJSON = { rows: queryResult };
-      res.json(newJSON);
+      res.json(queryResult);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+});
+
+app.patch("/products/:id", (req, res) => {
+  pool
+    .query(
+      "UPDATE products SET name = (?), product_code = (?), description = (?) WHERE id = (?)",
+      [
+        req.body.name,
+        req.body.product_code,
+        req.body.description,
+        req.params.id
+      ]
+    )
+    .then(queryResult => {
+      res.json(queryResult);
     })
     .catch(err => {
       console.error(err);

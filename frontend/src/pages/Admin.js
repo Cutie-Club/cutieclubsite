@@ -26,6 +26,27 @@ function fetchProducts() {
   });
 }
 
+function handleEdit(event, id) {
+  return new Promise((resolve, reject) => {
+    // create a request to perform our http method with
+    const request = new XMLHttpRequest();
+
+    // set up an event listener for state change
+    request.onreadystatechange = () => {
+      // once the request is ready (status of DONE(4) according to MDN),
+      // print out the response to our request
+      if (request.readyState === 4) {
+        resolve(JSON.parse(request.response));
+      }
+    };
+
+    // create a new PATCH request
+    request.open("PATCH", `http://localhost:9001/products/${id}`);
+    // send a request with some data
+    request.send();
+  });
+}
+
 function handleDelete(event, id) {
   return new Promise((resolve, reject) => {
     // create a request to perform our http method with
@@ -64,6 +85,13 @@ function Admin(props) {
       <h3>Add product</h3>
       <Table
         json={products}
+        edit={(event, id) => {
+          handleFormSubmission(
+            event.target.form,
+            `http://localhost:9001/products/${id}`,
+            "PATCH"
+          ).then(response => updateProducts());
+        }}
         delete={(event, id) => {
           handleDelete(event, id).then(response => {
             updateProducts();
@@ -73,16 +101,18 @@ function Admin(props) {
       <br />
       <Form
         onSubmit={event => {
+          event.preventDefault();
           handleFormSubmission(
-            event,
-            "http://localhost:9001/products/new"
+            event.target,
+            "http://localhost:9001/products/new",
+            "POST"
           ).then(response => updateProducts());
         }}
       >
-        <Input label="Name:" name="name" />
-        <Input label="Product Code:" name="product_code" />
-        <Input label="Description:" name="description" />
-        <Button type="submit" text="Save" />
+        <Input label="Name:" name="name" required={true} />
+        <Input label="Product Code:" name="product_code" required={true} />
+        <Input label="Description:" name="description" required={true} />
+        <Button type="submit" text="Add" cssclass="primary" />
       </Form>
     </>
   );
