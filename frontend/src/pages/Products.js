@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import Form from "../components/Form/Form.js";
+import Input from "../components/Input/Input.js";
+import Button from "../components/Button/Button.js";
 import ProductViewer from "../components/ProductViewer/ProductViewer.js";
 import queryToJSON from "../utils/queryToJSON.js";
 
@@ -47,7 +50,15 @@ function Products(props) {
     productDOM = <ProductViewer product={product} serial={queryObj.serial} />;
   }
 
-  return <div>{productDOM}</div>;
+  return (
+    <>
+      <Form action="/products">
+        <Input label="Product Finder:" type="search" name="query" />
+        <Button type="submit" text="Search" />
+      </Form>
+      <div>{productDOM}</div>
+    </>
+  );
 }
 
 export default Products;

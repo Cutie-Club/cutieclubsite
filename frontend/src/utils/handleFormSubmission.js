@@ -1,4 +1,4 @@
-function handleFormSubmission(event) {
+function handleFormSubmission(event, action) {
   // prevent default action (redirect) from happening
   event.preventDefault();
 
@@ -26,7 +26,7 @@ function handleFormSubmission(event) {
     };
 
     // create a new POST request
-    request.open("POST", "http://localhost:9001/products");
+    request.open("POST", action);
     // set request headers
     request.setRequestHeader("Content-Type", "application/json");
     // send a request with some data
