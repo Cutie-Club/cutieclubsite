@@ -1,4 +1,9 @@
 input {
-  width: 10em;
+  min-width: 5em;
   box-sizing: border-box;
+  font-size: 1em;
+}
+
+input:active {
+  border-bottom: 2px solid #eee;
 }

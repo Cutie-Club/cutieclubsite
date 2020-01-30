@@ -1,36 +1,23 @@
-function handleFormSubmission(formElement, action, method) {
-  // prevent default action (redirect) from happening
-  // event.preventDefault();
+function handleFormSubmission(HTMLForm, action, method) {
+  // setup a FormData object using the form in App
+  const form = new FormData(HTMLForm);
 
-  return new Promise((resolve, reject) => {
-    // setup a FormData object using the form in App
-    const form = new FormData(formElement);
-    // clear form now we have extracted data
-    formElement.reset();
-    // create a request to perform our http method with
-    const request = new XMLHttpRequest();
+  // reset html form
+  HTMLForm.reset();
 
-    // convert form data to json
-    let formObject = {};
-    for (var pair of form.entries()) {
-      formObject[pair[0]] = pair[1];
+  // convert form data to json
+  let formObject = {};
+  for (var pair of form.entries()) {
+    formObject[pair[0]] = pair[1];
+  }
+
+  // TODO: add multipart form submission support to backend
+  return fetch(action, {
+    method: method,
+    body: JSON.stringify(formObject),
+    headers: {
+      "Content-Type": "application/json"
     }
-
-    // set up an event listener for state change
-    request.onreadystatechange = () => {
-      // once the request is ready (status of DONE(4) according to MDN),
-      // print out the response to our request
-      if (request.readyState === 4) {
-        resolve(JSON.parse(request.response));
-      }
-    };
-
-    // create a new POST request
-    request.open(method, action);
-    // set request headers
-    request.setRequestHeader("Content-Type", "application/json");
-    // send a request with some data
-    request.send(JSON.stringify(formObject));
   });
 }
 

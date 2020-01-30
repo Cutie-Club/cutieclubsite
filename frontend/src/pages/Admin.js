@@ -5,80 +5,21 @@ import Button from "../components/Button/Button.js";
 import Table from "../components/Table/Table.js";
 import handleFormSubmission from "../utils/handleFormSubmission.js";
 
-function fetchProducts() {
-  return new Promise((resolve, reject) => {
-    // create a request to perform our http method with
-    const request = new XMLHttpRequest();
-
-    // set up an event listener for state change
-    request.onreadystatechange = () => {
-      // once the request is ready (status of DONE(4) according to MDN),
-      // print out the response to our request
-      if (request.readyState === 4) {
-        resolve(JSON.parse(request.response));
-      }
-    };
-
-    // create a new GET request
-    request.open("GET", "http://localhost:9001/products");
-    // send a request with some data
-    request.send();
-  });
-}
-
-function handleEdit(event, id) {
-  return new Promise((resolve, reject) => {
-    // create a request to perform our http method with
-    const request = new XMLHttpRequest();
-
-    // set up an event listener for state change
-    request.onreadystatechange = () => {
-      // once the request is ready (status of DONE(4) according to MDN),
-      // print out the response to our request
-      if (request.readyState === 4) {
-        resolve(JSON.parse(request.response));
-      }
-    };
-
-    // create a new PATCH request
-    request.open("PATCH", `http://localhost:9001/products/${id}`);
-    // send a request with some data
-    request.send();
-  });
-}
-
-function handleDelete(event, id) {
-  return new Promise((resolve, reject) => {
-    // create a request to perform our http method with
-    const request = new XMLHttpRequest();
-
-    // set up an event listener for state change
-    request.onreadystatechange = () => {
-      // once the request is ready (status of DONE(4) according to MDN),
-      // print out the response to our request
-      if (request.readyState === 4) {
-        resolve(JSON.parse(request.response));
-      }
-    };
-
-    // create a new DELETE request
-    request.open("DELETE", `http://localhost:9001/products/${id}`);
-    // send a request with some data
-    request.send();
-  });
-}
-
 function Admin(props) {
   const [page, setPage] = useState();
   const [products, setProducts] = useState();
 
   const updateProducts = () => {
-    fetchProducts().then(requestedJSON => {
-      setProducts(requestedJSON);
-    });
+    fetch("http://localhost:9001/products", { method: "GET" })
+      .then(response => response.json())
+      .then(data => {
+        setProducts(data);
+      });
   };
 
+  // setting state of products in use effect so if we put products in the array of triggers it would loop infinitely
   useEffect(() => updateProducts(), []);
+
   return (
     <>
       <h1>hello [user]!</h1>
@@ -93,7 +34,9 @@ function Admin(props) {
           ).then(response => updateProducts());
         }}
         delete={(event, id) => {
-          handleDelete(event, id).then(response => {
+          fetch(`http://localhost:9001/products/${id}`, {
+            method: "DELETE"
+          }).then(response => {
             updateProducts();
           });
         }}

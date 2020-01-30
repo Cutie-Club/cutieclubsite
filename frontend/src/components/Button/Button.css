@@ -2,21 +2,21 @@ button:disabled {
   cursor: not-allowed;
   background: #eee;
   color: #bbb;
-  border: none;
+  border: 2px solid #eee;
 }
 
 button {
-  width: 7em;
-  height: 3em;
-  padding: 0.5em 1em;
+  width: 8em;
+  padding: 0.75em 1.5em;
   border: 2px solid #ccc;
   color: #666;
   border-radius: 2em;
   background: white;
-  transition: 0.25s all ease;
+  transition: 0.4s all ease;
   font-size: 1em;
   font-weight: bold;
   margin: 0.25em;
+  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.25);
 }
 
 .primary:not(:disabled) {
@@ -32,23 +32,22 @@ button {
 button:hover:not(:disabled) {
   background: #ff77bb;
   color: white;
-  border: transparent;
-  box-shadow: 2px 5px 8px rgba(0, 0, 0, 0.25);
-  transform: translateY(-0.1em);
+  border: 2px solid #ff77bb;
+  box-shadow: 0px 5px 8px rgba(0, 0, 0, 0.25);
 }
 
 button:active:not(:disabled) {
-  transform: translateY(0.1em);
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
 }
 
 button.warning:not(:disabled) {
-  border: none;
+  border: 2px solid darkorange;
   background: darkorange;
   color: white;
 }
 
 button.warning:hover:not(:disabled) {
+  border: 2px solid orange;
   background: orange;
   color: white;
 }
@@ -56,7 +55,7 @@ button.warning:hover:not(:disabled) {
 .pinkButt {
   background: #ff77bb;
   color: white;
-  border: none;
+  border: 2px solid #ff77bb;
 }
 
 button:focus {
@@ -65,21 +64,22 @@ button:focus {
 
 button.danger:not(:disabled) {
   background: crimson;
-  border: none;
+  border: 2px solid crimson;
   color: white;
 }
 
 button.danger:hover:not(:disabled) {
+  border: 2px solid red;
   background: red;
 }
 
 button.accept:not(:disabled) {
   background: #4caf50;
-  border: none;
+  border: 2px solid #4caf50;
   color: white;
 }
 button.accept:hover {
   background: forestgreen;
-  border: none;
+  border: 2px solid forestgreen;
   color: white;
 }
