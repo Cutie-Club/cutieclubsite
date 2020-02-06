@@ -16,7 +16,7 @@ tbody > tr:nth-child(even) {
 
 thead {
   font-size: 1.25em;
-  background-color: #ff77bb;
+  background-color: #444;
   color: white;
 }
 

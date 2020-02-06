@@ -34,7 +34,6 @@ function handleSearch(string) {
 function Products(props) {
   const [product, setProduct] = useState(undefined);
   let queryObj = queryToJSON(props.history.location.search);
-  console.log(queryObj);
 
   useEffect(() => {
     // if query is supplied

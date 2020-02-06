@@ -6,7 +6,7 @@ import Table from "../components/Table/Table.js";
 import handleFormSubmission from "../utils/handleFormSubmission.js";
 
 function Admin(props) {
-  const [page, setPage] = useState();
+  // const [table, setTable] = useState(); this will replace products state
   const [products, setProducts] = useState();
 
   const updateProducts = () => {

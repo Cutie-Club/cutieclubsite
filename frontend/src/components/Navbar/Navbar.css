@@ -1,0 +1,36 @@
+.top-bar {
+  background: #a5f5d6;
+  display: flex;
+  justify-content: space-around;
+  width: 100vw;
+}
+
+.top-bar img {
+  padding: 0.5em;
+}
+.menu-items {
+  display: flex;
+  align-items: center;
+  outline: 1px solid transparent; /* add to fix anti aliasing */
+  flex-flow: row wrap;
+}
+
+.menu-items a {
+  font-size: 2em;
+  color: #444;
+  text-decoration: none;
+  margin: 0 1em;
+  letter-spacing: -0.05em;
+  font-weight: 200;
+  transition: 0.2s all ease;
+}
+
+.menu-items a:hover {
+  color: hotpink;
+  transform: perspective(100px) translate3d(0, 0, 0.25em);
+}
+
+.menu-items .active {
+  color: hotpink;
+  /* transform: perspective(100px) translate3d(0, 0, -100px); */
+}

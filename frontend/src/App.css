@@ -1,7 +1,26 @@
-::selection {
-  color: white;
-  background: #ff77bb;
-  padding: 5px;
+@import url("https://rsms.me/inter/inter.css");
+html {
+  font-family: "Inter", sans-serif;
+}
+@supports (font-variation-settings: normal) {
+  html {
+    font-family: "Inter var", sans-serif;
+  }
+}
 
-  cursor: grab;
+/* pink 	#ff77bb */
+/* yellow #ffe310 */
+
+::selection {
+  background: hotpink;
+  padding: 5px;
+}
+
+* {
+  font-family: "Inter", sans-serif;
+}
+
+html,
+body {
+  font-size: 18px;
 }
