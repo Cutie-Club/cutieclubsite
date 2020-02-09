@@ -24,3 +24,8 @@ html,
 body {
   font-size: 18px;
 }
+
+.product-grid {
+  display: flex;
+  flex-flow: row wrap;
+}
