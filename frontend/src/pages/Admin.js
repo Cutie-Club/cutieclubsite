@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Form from "../components/Form/Form.js";
-import Input from "../components/Input/Input.js";
-import Button from "../components/Button/Button.js";
 import Table from "../components/Table/Table.js";
 import handleFormSubmission from "../utils/handleFormSubmission.js";
 
@@ -40,33 +37,16 @@ function Admin(props) {
             updateProducts();
           });
         }}
-      />
-      <br />
-      <Form
-        onSubmit={event => {
-          event.preventDefault();
+        add={event => {
           handleFormSubmission(
             event.target,
             "http://localhost:9001/products/new",
             "POST"
           ).then(response => updateProducts());
         }}
-      >
-        <Input label="Name:" name="name" required={true} />
-        <Input label="Product Code:" name="product_code" required={true} />
-        <Input label="Description:" name="description" required={true} />
-        <Button type="submit" text="Add" cssclass="primary" />
-      </Form>
+      />
     </>
   );
 }
 
 export default Admin;
-
-// TODO: Add support for name mapping in the json files (optional)
-// "names":{
-//   "id": "ID",
-//   "title": "Title",
-//   "description": "Desc",
-//   "product_code": "Product Code"
-// }

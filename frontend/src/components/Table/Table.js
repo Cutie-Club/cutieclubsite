@@ -103,7 +103,6 @@ function Table(props) {
               form="editedRow"
               onClick={event => {
                 event.preventDefault();
-                console.log("PRESSED");
                 props.edit(event, item.id);
               }}
             />
@@ -128,10 +127,41 @@ function Table(props) {
         </tr>
       );
     });
+
+    let addRowInputs = [];
+    headers.forEach((item, i) => {
+      addRowInputs.push(
+        <td key={i}>
+          {item === "id" ? "❔" : <Input name={item} form="addRow" />}
+        </td>
+      );
+    });
+
+    let addButtons = [];
+    addButtons.push(
+      <td>
+        <Button text="Add" cssclass="accept" type="submit" form="addRow" />
+        <Button text="Clear" cssclass="warning" type="reset" form="addRow" />
+      </td>
+    );
+
+    tableContent.push(
+      <tr key={props.json.rows.length + 1}>
+        {addRowInputs}
+        {addButtons}
+      </tr>
+    );
   }
   return (
     <>
       <Form id="editedRow" />
+      <Form
+        id="addRow"
+        onSubmit={event => {
+          event.preventDefault();
+          props.add(event);
+        }}
+      />
       <table>
         <thead>
           <tr>{tableHeader}</tr>
