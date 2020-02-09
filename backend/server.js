@@ -19,9 +19,9 @@ pool
     console.error("not connected due to error: " + err);
   });
 
-const dbExecute = sql => {
+const dbExecute = (sql, args = []) => {
   pool
-    .query(sql)
+    .query(sql, args)
     .then(columns => {
       console.log(columns);
     })
@@ -30,28 +30,61 @@ const dbExecute = sql => {
     });
 };
 
-// create table in db
+// DELETE EVERYTHING
+// dbExecute(`DROP TABLE product_images, products`);
+
+// create table for products
 dbExecute(
-  "CREATE TABLE IF NOT EXISTS products (id INTEGER PRIMARY KEY AUTO_INCREMENT, name TEXT NOT NULL, product_code CHAR(4) NOT NULL, description TEXT NOT NULL)"
+  `CREATE TABLE IF NOT EXISTS products (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    name TEXT NOT NULL,
+    code TEXT NOT NULL,
+    blurb TEXT NOT NULL,
+		image TEXT NOT NULL
+	)
+  `
+);
+
+// create table for a product family
+const productCode = "BRDF";
+dbExecute(
+  `CREATE TABLE IF NOT EXISTS ${productCode} (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    version INTEGER NOT NULL,
+    batch INTEGER NOT NULL,
+    uid INTEGER NOT NULL,
+    information TEXT,
+    timestamp DATETIME
+  )`
+);
+
+dbExecute(
+  `CREATE TABLE IF NOT EXISTS product_images (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    product_id INTEGER NOT NULL,
+    location TEXT NOT NULL,
+    FOREIGN KEY (product_id) REFERENCES products(id)
+  )`
+);
+
+dbExecute(
+  "INSERT IGNORE INTO products VALUES (1, 'Borsdorf', 'BRDF', 'My really cool keyvboard wib alsps', 'http://localhost:9001/borsdorf.png')"
 );
 dbExecute(
-  "INSERT IGNORE INTO products VALUES (1, 'Borsdorf', 'BRDF', 'My really cool keyvboard wib alsps')"
+  "INSERT IGNORE INTO products VALUES (2, 'Donut', 'DNUT', 'My reallui cool round macro pad', 'http://localhost:9001/donut.jpg')"
 );
 dbExecute(
-  "INSERT IGNORE INTO products VALUES (2, 'Donut', 'DNUT', 'My reallui cool round macro pad')"
-);
-dbExecute(
-  "INSERT IGNORE INTO products VALUES (3, 'Splixty', 'SPLT', '60% split keeb')"
+  "INSERT IGNORE INTO products VALUES (3, 'Splixty', 'SPLT', '60% split keeb', 'http://localhost:9001/borsdorf.png')"
 );
 
 // server middleware
 app.use(bodyParser.json()); // parse json bodies
 app.use(bodyParser.urlencoded({ extended: true })); // parse form bodies
 app.use(cors()); // allow cross origin shit (probs turn off in prod)
+app.use(express.static("public")); // public file folder
 
 // server routes
 app.post("/products", (req, res) => {
-  console.log(req.body);
   searchQuery = req.body.query;
   pool
     .query("SELECT * FROM products WHERE SOUNDEX(name) = SOUNDEX( ? )", [
@@ -80,21 +113,6 @@ app.get("/products", (req, res) => {
     });
 });
 
-app.post("/products/new", (req, res) => {
-  console.log(req.body);
-  pool
-    .query(
-      "INSERT IGNORE INTO products (name, product_code, description) VALUES ( ?, ?, ? )",
-      [req.body.name, req.body.product_code, req.body.description]
-    )
-    .then(queryResult => {
-      res.json(queryResult);
-    })
-    .catch(err => {
-      console.error(err);
-    });
-});
-
 app.delete("/products/:id", (req, res) => {
   pool
     .query("DELETE FROM products WHERE id = (?)", [req.params.id])
@@ -106,17 +124,43 @@ app.delete("/products/:id", (req, res) => {
     });
 });
 
-app.patch("/products/:id", (req, res) => {
+app.post("/products/new", (req, res) => {
+  console.log(req.body);
+  let keyList = "";
+  let valueList = "";
+  Object.entries(req.body).forEach(([key, value], index) => {
+    keyList += key;
+    valueList += `"${value}"`;
+    if (index !== Object.keys(req.body).length - 1) {
+      keyList += ", ";
+      valueList += ", ";
+    }
+  });
+
+  let sqlQuery = `INSERT IGNORE INTO products (${keyList}) VALUES (${valueList})`;
+
   pool
-    .query(
-      "UPDATE products SET name = (?), product_code = (?), description = (?) WHERE id = (?)",
-      [
-        req.body.name,
-        req.body.product_code,
-        req.body.description,
-        req.params.id
-      ]
-    )
+    .query(sqlQuery)
+    .then(queryResult => {
+      res.json(queryResult);
+    })
+    .catch(err => {
+      console.error(err);
+    });
+});
+
+app.patch("/products/:id", (req, res) => {
+  let sqlQuery = "UPDATE products SET ";
+  Object.entries(req.body).forEach(([key, value], index) => {
+    sqlQuery += `${key} = "${value}"`;
+    if (index !== Object.keys(req.body).length - 1) {
+      sqlQuery += ", ";
+    }
+  });
+  sqlQuery += ` WHERE id = "${req.params.id}"`;
+
+  pool
+    .query(sqlQuery)
     .then(queryResult => {
       res.json(queryResult);
     })
