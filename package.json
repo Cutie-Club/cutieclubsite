@@ -1,0 +1,22 @@
+{
+  "name": "cutieclubsite",
+  "version": "1.0.0",
+  "description": "Cutie Club website, written in React and Node Express.",
+  "repository": "https://github.com/amberstarlight/cutieclubsite.git",
+  "author": {
+    "name": "Amber Holly",
+    "email": "amber@amber.vision"
+  },
+  "contributors": [
+    {
+      "name": "Callum Hart",
+      "email": "callumhart@btinternet.com"
+    }
+  ],
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "db:start": "sudo systemctl start mariadb",
+    "dev:start": "(cd backend && yarn dev:start) & (cd frontend && yarn start)"
+  }
+}

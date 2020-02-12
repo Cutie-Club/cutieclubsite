@@ -1,12 +1,35 @@
-const { dbConfig } = require("./config.json");
+const { dbConfig, uploadConfig } = require("./config.json");
 const express = require("express");
 const mariadb = require("mariadb");
 const bodyParser = require("body-parser");
+const multer = require("multer");
 const cors = require("cors"); // cross origin resource sharing
 
 const app = express();
 const port = 9001;
 const pool = mariadb.createPool(dbConfig);
+
+const storage = multer.diskStorage({
+  destination: "./public/",
+  filename: function(req, file, cb) {
+    let fileName = file.originalname.split(".", 1);
+    let fileExt = file.mimetype.split("/")[1];
+    cb(null, `${fileName}-${Date.now()}.${fileExt}`);
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  fileFilter: function(req, file, cb) {
+    let fileExt = file.mimetype.split("/")[1];
+    console.log(fileExt);
+    if (!uploadConfig.validExts.includes(fileExt)) {
+      cb(null, false);
+    } else {
+      cb(null, true);
+    }
+  }
+});
 
 // setup db connection
 pool
@@ -80,11 +103,11 @@ dbExecute(
 // server middleware
 app.use(bodyParser.json()); // parse json bodies
 app.use(bodyParser.urlencoded({ extended: true })); // parse form bodies
-app.use(cors()); // allow cross origin shit (probs turn off in prod)
+app.use(cors()); // allow cross origin resource sharing (probs turn off in prod)
 app.use(express.static("public")); // public file folder
 
 // server routes
-app.post("/products", (req, res) => {
+app.post("/products", upload.none(), (req, res) => {
   searchQuery = req.body.query;
   pool
     .query("SELECT * FROM products WHERE SOUNDEX(name) = SOUNDEX( ? )", [
@@ -92,7 +115,6 @@ app.post("/products", (req, res) => {
     ])
     .then(columns => {
       columns.forEach(item => {
-        console.log(item);
         res.json(item);
       });
     })
@@ -101,7 +123,7 @@ app.post("/products", (req, res) => {
     });
 });
 
-app.get("/products", (req, res) => {
+app.get("/products", upload.none(), (req, res) => {
   pool
     .query("SELECT * FROM products")
     .then(queryResult => {
@@ -113,7 +135,7 @@ app.get("/products", (req, res) => {
     });
 });
 
-app.delete("/products/:id", (req, res) => {
+app.delete("/products/:id", upload.none(), (req, res) => {
   pool
     .query("DELETE FROM products WHERE id = (?)", [req.params.id])
     .then(queryResult => {
@@ -124,21 +146,23 @@ app.delete("/products/:id", (req, res) => {
     });
 });
 
-app.post("/products/new", (req, res) => {
-  console.log(req.body);
+app.post("/products/new", upload.single("image"), (req, res) => {
+  if (!req.file) {
+    throw new Error("File not passed");
+  }
+
   let keyList = "";
   let valueList = "";
   Object.entries(req.body).forEach(([key, value], index) => {
-    keyList += key;
-    valueList += `"${value}"`;
-    if (index !== Object.keys(req.body).length - 1) {
-      keyList += ", ";
-      valueList += ", ";
-    }
+    keyList += `${key}, `;
+    valueList += `"${value}", `;
   });
 
-  let sqlQuery = `INSERT IGNORE INTO products (${keyList}) VALUES (${valueList})`;
+  const url = "http://" + req.get("host");
+  keyList += `image`;
+  valueList += `"${url}/${req.file.filename}"`;
 
+  let sqlQuery = `INSERT IGNORE INTO products (${keyList}) VALUES (${valueList})`;
   pool
     .query(sqlQuery)
     .then(queryResult => {
@@ -149,7 +173,7 @@ app.post("/products/new", (req, res) => {
     });
 });
 
-app.patch("/products/:id", (req, res) => {
+app.patch("/products/:id", upload.single("image"), (req, res) => {
   let sqlQuery = "UPDATE products SET ";
   Object.entries(req.body).forEach(([key, value], index) => {
     sqlQuery += `${key} = "${value}"`;

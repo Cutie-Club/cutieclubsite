@@ -5,4 +5,7 @@
 		"password" : "password",
 		"database" : "mydb"
 	}
+  "uploadConfig": {
+    "validExts": ["png", "jpg", "jpeg"]
+  }
 }
