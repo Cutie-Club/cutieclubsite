@@ -47,15 +47,30 @@ function Table(props) {
       let tableRow = [];
       headers.forEach((columnName, i) => {
         let rowContent = item[columnName] || "❔";
-        if (editing[item.id] && !(columnName === "id")) {
-          rowContent = (
-            <Input
-              name={columnName}
-              required={true}
-              initialValue={item[columnName]}
-              form="editedRow"
-            />
-          );
+
+        switch (columnName.toLowerCase()) {
+          case "id":
+            break;
+          case "image":
+            if (!editing[item.id]) {
+              rowContent = <img src={item[columnName]} alt={`${item.name}`} />;
+            } else {
+              rowContent = (
+                <Input type="file" name={columnName} form="editedRow" />
+              );
+            }
+            break;
+          default:
+            if (editing[item.id]) {
+              rowContent = (
+                <Input
+                  name={columnName}
+                  required={true}
+                  initialValue={item[columnName]}
+                  form="editedRow"
+                />
+              );
+            }
         }
 
         tableRow.push(<td key={i}>{rowContent}</td>);
@@ -130,18 +145,37 @@ function Table(props) {
 
     let addRowInputs = [];
     headers.forEach((item, i) => {
-      addRowInputs.push(
-        <td key={i}>
-          {item === "id" ? "❔" : <Input name={item} form="addRow" />}
-        </td>
-      );
+      let tableData;
+      switch (item.toLowerCase()) {
+        case "id":
+          tableData = "❔";
+          break;
+        case "image":
+          tableData = <Input name={item} type="file" form="addRow" />;
+          break;
+        default:
+          tableData = <Input name={item} form="addRow" />;
+      }
+      addRowInputs.push(<td key={i}>{tableData}</td>);
     });
 
     let addButtons = [];
     addButtons.push(
-      <td>
-        <Button text="Add" cssclass="accept" type="submit" form="addRow" />
-        <Button text="Clear" cssclass="warning" type="reset" form="addRow" />
+      <td key={0}>
+        <Button
+          key={"add"}
+          text="Add"
+          cssclass="accept"
+          type="submit"
+          form="addRow"
+        />
+        <Button
+          key={"clear"}
+          text="Clear"
+          cssclass="warning"
+          type="reset"
+          form="addRow"
+        />
       </td>
     );
 
@@ -155,13 +189,7 @@ function Table(props) {
   return (
     <>
       <Form id="editedRow" />
-      <Form
-        id="addRow"
-        onSubmit={event => {
-          event.preventDefault();
-          props.add(event);
-        }}
-      />
+      <Form id="addRow" onSubmit={props.add} />
       <table>
         <thead>
           <tr>{tableHeader}</tr>

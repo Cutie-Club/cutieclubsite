@@ -1,3 +1,5 @@
+// TODO: Rewrite this test, as the form handler now no longer has the behaviour
+
 import handleFormSubmission from "./handleFormSubmission";
 
 test("Form is handled", () => {

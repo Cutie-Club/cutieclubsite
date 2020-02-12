@@ -5,7 +5,7 @@ function Products(props) {
   const [products, setProducts] = useState();
 
   const updateProducts = () => {
-    fetch("http://localhost:9001/products", { method: "GET" })
+    fetch(`http://localhost:9001/products`, { method: "GET" })
       .then(response => response.json())
       .then(data => {
         setProducts(data);
@@ -20,7 +20,6 @@ function Products(props) {
   let productsGrid = [];
   if (products) {
     products.rows.forEach((product, i) => {
-      console.log(product);
       productsGrid.push(
         <ProductCard
           key={i}
