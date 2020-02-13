@@ -174,8 +174,16 @@ app.post("/products/new", upload.single("image"), (req, res) => {
 });
 
 app.patch("/products/:id", upload.single("image"), (req, res) => {
+  let newData = req.body;
+  if (req.file) {
+    console.log("file uploaded");
+    newData.image = `http://${req.get("host")}/${req.file.filename}`;
+  }
+
+  console.log(newData);
+
   let sqlQuery = "UPDATE products SET ";
-  Object.entries(req.body).forEach(([key, value], index) => {
+  Object.entries(newData).forEach(([key, value], index) => {
     sqlQuery += `${key} = "${value}"`;
     if (index !== Object.keys(req.body).length - 1) {
       sqlQuery += ", ";
@@ -183,6 +191,7 @@ app.patch("/products/:id", upload.single("image"), (req, res) => {
   });
   sqlQuery += ` WHERE id = "${req.params.id}"`;
 
+  console.log(sqlQuery);
   pool
     .query(sqlQuery)
     .then(queryResult => {
