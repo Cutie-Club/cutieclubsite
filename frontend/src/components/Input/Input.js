@@ -2,7 +2,17 @@ import React, { useState } from "react";
 import "./Input.css";
 
 function Input(props) {
-  const [value, setValue] = useState(props.initialValue || "");
+  let initialValue = props.initialValue || "";
+  let onChangeHandler = event => {
+    setValue(event.target.value);
+  };
+
+  if (props.type && props.type.toLowerCase() === "file") {
+    initialValue = undefined;
+    onChangeHandler = undefined;
+  }
+
+  const [value, setValue] = useState(initialValue);
 
   let editedProps = { ...props };
 
@@ -13,13 +23,7 @@ function Input(props) {
   return (
     <label>
       {props.label}
-      <input
-        value={value}
-        onChange={event => {
-          setValue(event.target.value);
-        }}
-        {...editedProps}
-      />
+      <input value={value} onChange={onChangeHandler} {...editedProps} />
     </label>
   );
 }

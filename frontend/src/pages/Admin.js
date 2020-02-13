@@ -24,8 +24,9 @@ function Admin(props) {
       <Table
         json={products}
         edit={(event, id) => {
+          event.preventDefault();
           handleFormSubmission(
-            event.target.form,
+            event.target,
             `http://localhost:9001/products/${id}`,
             "PATCH"
           ).then(response => updateProducts());
@@ -38,6 +39,7 @@ function Admin(props) {
           });
         }}
         add={event => {
+          event.preventDefault();
           handleFormSubmission(
             event.target,
             "http://localhost:9001/products/new",

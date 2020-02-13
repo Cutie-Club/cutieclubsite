@@ -10,6 +10,18 @@ function Table(props) {
   let tableHeader = [];
   let tableContent = [];
 
+  const toggleEdit = id => {
+    // clone editing into a new object:
+    // we have to spreader it to clone it
+    // otherwise it will not detect a difference
+    // and not re-render
+    let editingClone = { ...editing };
+    // toggle the editing state of the current items id
+    editingClone[id] = !editingClone[id];
+    // update editing
+    setEditing(editingClone);
+  };
+
   // sets all items editing states to false
   useEffect(() => {
     let populatedEditing = {};
@@ -53,10 +65,13 @@ function Table(props) {
             break;
           case "image":
             if (!editing[item.id]) {
-              rowContent = <img src={item[columnName]} alt={`${item.name}`} />;
+              rowContent = <img src={item[columnName]} alt={item.name} />;
             } else {
               rowContent = (
-                <Input type="file" name={columnName} form="editedRow" />
+                <>
+                  <img src={item[columnName]} alt={item.name} />
+                  <Input type="file" name={columnName} form="editedRow" />
+                </>
               );
             }
             break;
@@ -84,15 +99,7 @@ function Table(props) {
             disabled={Object.values(editing).includes(true)}
             onClick={event => {
               event.preventDefault();
-              // clone editing into a new object:
-              // we have to spreader it to clone it
-              // otherwise it will not detect a difference
-              // and not re-render
-              let newEditing = { ...editing };
-              // set the editing state of the current items id to true
-              newEditing[item.id] = true;
-              // update editing
-              setEditing(newEditing);
+              toggleEdit(item.id);
             }}
           />
           <Button
@@ -116,19 +123,13 @@ function Table(props) {
               type="submit"
               text="Save"
               form="editedRow"
-              onClick={event => {
-                event.preventDefault();
-                props.edit(event, item.id);
-              }}
             />
             <Button
               cssclass="warning"
-              text="Discard"
+              text="Cancel"
               onClick={event => {
                 event.preventDefault();
-                let newEditing = { ...editing };
-                newEditing[item.id] = false;
-                setEditing(newEditing);
+                toggleEdit(item.id);
               }}
             />
           </td>
@@ -150,11 +151,15 @@ function Table(props) {
         case "id":
           tableData = "❔";
           break;
-        case "image":
-          tableData = <Input name={item} type="file" form="addRow" />;
-          break;
         default:
-          tableData = <Input name={item} form="addRow" />;
+          tableData = (
+            <Input
+              name={item}
+              type={item.toLowerCase() === "image" ? "file" : undefined}
+              form="addRow"
+              disabled={Object.values(editing).includes(true)}
+            />
+          );
       }
       addRowInputs.push(<td key={i}>{tableData}</td>);
     });
@@ -168,6 +173,7 @@ function Table(props) {
           cssclass="accept"
           type="submit"
           form="addRow"
+          disabled={Object.values(editing).includes(true)}
         />
         <Button
           key={"clear"}
@@ -175,6 +181,7 @@ function Table(props) {
           cssclass="warning"
           type="reset"
           form="addRow"
+          disabled={Object.values(editing).includes(true)}
         />
       </td>
     );
@@ -186,9 +193,19 @@ function Table(props) {
       </tr>
     );
   }
+
   return (
     <>
-      <Form id="editedRow" />
+      <Form
+        id="editedRow"
+        onSubmit={event => {
+          let itemIDs = Object.keys(editing);
+          let currentID = itemIDs.filter(id => {
+            return editing[id];
+          });
+          props.edit(event, currentID[0]);
+        }}
+      />
       <Form id="addRow" onSubmit={props.add} />
       <table>
         <thead>
