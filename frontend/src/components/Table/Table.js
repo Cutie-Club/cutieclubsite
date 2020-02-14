@@ -4,8 +4,32 @@ import Input from "../Input/Input.js";
 import Form from "../Form/Form.js";
 import "./Table.css";
 
+function handleSubmission(event, method, action) {
+  event.preventDefault();
+
+  const HTMLForm = event.target;
+
+  const form = new FormData(HTMLForm);
+  // reset html form
+  HTMLForm.reset();
+
+  return fetch(action, {
+    method: method,
+    body: form
+  });
+}
+
 function Table(props) {
   const [editing, setEditing] = useState({});
+  const [data, setData] = useState(undefined);
+
+  const updateDataSource = () => {
+    fetch(`http://localhost:9001/${props.route}`, { method: "GET" })
+      .then(response => response.json())
+      .then(data => {
+        setData(data);
+      });
+  };
 
   let tableHeader = [];
   let tableContent = [];
@@ -22,21 +46,23 @@ function Table(props) {
     setEditing(editingClone);
   };
 
-  // sets all items editing states to false
+  useEffect(updateDataSource, []);
+
   useEffect(() => {
+    // sets all items editing states to false
     let populatedEditing = {};
-    if (props.json) {
-      props.json.rows.forEach(item => {
+    if (data) {
+      data.rows.forEach(item => {
         populatedEditing[item.id] = false;
       });
     }
     setEditing(populatedEditing);
-  }, [props.json]);
+  }, [data]);
 
-  if (props.json) {
+  if (data) {
     let jsonKeys = [];
-    for (let index in props.json.rows) {
-      let item = props.json.rows[index];
+    for (let index in data.rows) {
+      let item = data.rows[index];
       jsonKeys.push(...Object.keys(item));
     }
     let headers = [...new Set(jsonKeys)];
@@ -55,7 +81,7 @@ function Table(props) {
       </th>
     );
 
-    props.json.rows.forEach((item, i) => {
+    data.rows.forEach((item, i) => {
       let tableRow = [];
       headers.forEach((columnName, i) => {
         let rowContent = item[columnName] || "❔";
@@ -109,7 +135,11 @@ function Table(props) {
             disabled={Object.values(editing).includes(true)}
             onClick={event => {
               event.preventDefault();
-              props.delete(event, item.id);
+              fetch(`http://localhost:9001/${props.route}/${item.id}`, {
+                method: "DELETE"
+              }).then(result => {
+                updateDataSource();
+              });
             }}
           />
         </td>
@@ -187,7 +217,7 @@ function Table(props) {
     );
 
     tableContent.push(
-      <tr key={props.json.rows.length + 1}>
+      <tr key={data.rows.length + 1}>
         {addRowInputs}
         {addButtons}
       </tr>
@@ -203,10 +233,27 @@ function Table(props) {
           let currentID = itemIDs.filter(id => {
             return editing[id];
           });
-          props.edit(event, currentID[0]);
+          handleSubmission(
+            event,
+            "PATCH",
+            `http://localhost:9001/${props.route}/${currentID[0]}`
+          ).then(result => {
+            updateDataSource();
+          });
         }}
       />
-      <Form id="addRow" onSubmit={props.add} />
+      <Form
+        id="addRow"
+        onSubmit={event => {
+          handleSubmission(
+            event,
+            "POST",
+            `http://localhost:9001/${props.route}/new`
+          ).then(result => {
+            updateDataSource();
+          });
+        }}
+      />
       <table>
         <thead>
           <tr>{tableHeader}</tr>
