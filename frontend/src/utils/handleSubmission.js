@@ -1,14 +1,13 @@
-function handleFormSubmission(HTMLForm, action, method) {
-  // setup a FormData object using the form in App
+function handleSubmission(event, method, action) {
+  event.preventDefault();
+  const HTMLForm = event.target;
   const form = new FormData(HTMLForm);
-
   // reset html form
   HTMLForm.reset();
-
   return fetch(action, {
     method: method,
     body: form
   });
 }
 
-export default handleFormSubmission;
+export default handleSubmission;

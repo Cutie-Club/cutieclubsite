@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from "react";
-import Button from "../Button/Button.js";
 import Input from "../Input/Input.js";
 import Form from "../Form/Form.js";
+import handleSubmission from "../../utils/handleSubmission.js";
+import createHeaders from "./createHeaders.js";
+import createButtons from "./createButtons.js";
 import "./Table.css";
 
 function Table(props) {
-  const [editing, setEditing] = useState({});
+  // init hooks
+  const [editing, setEditing] = useState(undefined);
+  const [data, setData] = useState(undefined);
 
-  let tableHeader = [];
-  let tableContent = [];
+  // declare helper functions
+  const updateDataSource = () => {
+    fetch(`http://localhost:9001/${props.route}`, { method: "GET" })
+      .then(response => response.json())
+      .then(data => {
+        setData(data);
+      });
+  };
 
   const toggleEdit = id => {
     // clone editing into a new object:
@@ -18,180 +28,84 @@ function Table(props) {
     let editingClone = { ...editing };
     // toggle the editing state of the current items id
     editingClone[id] = !editingClone[id];
-    // update editing
     setEditing(editingClone);
   };
 
-  // sets all items editing states to false
+  // setup effect hooks
+  useEffect(updateDataSource, []);
   useEffect(() => {
-    let populatedEditing = {};
-    if (props.json) {
-      props.json.rows.forEach(item => {
+    if (data) {
+      let populatedEditing = {};
+      data.rows.forEach(item => {
         populatedEditing[item.id] = false;
       });
+      setEditing(populatedEditing);
     }
-    setEditing(populatedEditing);
-  }, [props.json]);
+  }, [data]);
 
-  if (props.json) {
-    let jsonKeys = [];
-    for (let index in props.json.rows) {
-      let item = props.json.rows[index];
-      jsonKeys.push(...Object.keys(item));
-    }
-    let headers = [...new Set(jsonKeys)];
+  // declare table variables
+  let tableHeader = [];
+  let tableContent = [];
 
-    headers.forEach((item, i) => {
-      tableHeader.push(
-        <th scope="col" key={i}>
-          {item}
-        </th>
-      );
-    });
+  if (data && editing) {
+    let headers = createHeaders(data.rows, tableHeader);
 
-    tableHeader.push(
-      <th scope="col" key={headers.length + 1}>
-        Actions
-      </th>
-    );
-
-    props.json.rows.forEach((item, i) => {
-      let tableRow = [];
+    for (let rowIndex = 0; rowIndex < data.rows.length + 1; rowIndex++) {
+      let newRow = [];
+      let currentRow = data.rows[rowIndex];
       headers.forEach((columnName, i) => {
-        let rowContent = item[columnName] || "❔";
-
+        let cellContent = (
+          <Input
+            name={columnName}
+            type={columnName.toLowerCase() === "image" ? "file" : undefined}
+            form="addRow"
+            disabled={Object.values(editing).includes(true)}
+          />
+        );
         switch (columnName.toLowerCase()) {
-          case "id":
-            break;
           case "image":
-            if (!editing[item.id]) {
-              rowContent = <img src={item[columnName]} alt={item.name} />;
-            } else {
-              rowContent = (
-                <>
-                  <img src={item[columnName]} alt={item.name} />
-                  <Input type="file" name={columnName} form="editedRow" />
-                </>
+            if (rowIndex !== data.rows.length) {
+              cellContent = (
+                <img src={currentRow[columnName]} alt={currentRow.name} />
               );
+            }
+            break;
+          case "actions":
+            cellContent = createButtons(
+              updateDataSource,
+              toggleEdit,
+              editing,
+              currentRow,
+              props.route
+            );
+            break;
+          case "id":
+            if (rowIndex !== data.rows.length) {
+              cellContent = currentRow[columnName] || "❔";
+            } else {
+              cellContent = "🆕";
             }
             break;
           default:
-            if (editing[item.id]) {
-              rowContent = (
-                <Input
-                  name={columnName}
-                  required={true}
-                  initialValue={item[columnName]}
-                  form="editedRow"
-                />
-              );
+            if (rowIndex !== data.rows.length) {
+              cellContent = currentRow[columnName] || "❔";
+              if (editing[currentRow.id]) {
+                cellContent = (
+                  <Input
+                    name={columnName}
+                    required={true}
+                    initialValue={currentRow[columnName]}
+                    form="editedRow"
+                  />
+                );
+              }
             }
         }
 
-        tableRow.push(<td key={i}>{rowContent}</td>);
+        newRow.push(<td key={i}>{cellContent}</td>);
       });
-
-      let actionButtons = (
-        <td>
-          <Button
-            text="Edit"
-            cssclass="primary"
-            disabled={Object.values(editing).includes(true)}
-            onClick={event => {
-              event.preventDefault();
-              toggleEdit(item.id);
-            }}
-          />
-          <Button
-            // key="deleteButton"
-            text="Delete"
-            cssclass="danger"
-            disabled={Object.values(editing).includes(true)}
-            onClick={event => {
-              event.preventDefault();
-              props.delete(event, item.id);
-            }}
-          />
-        </td>
-      );
-
-      if (editing[item.id]) {
-        actionButtons = (
-          <td>
-            <Button
-              cssclass="accept"
-              type="submit"
-              text="Save"
-              form="editedRow"
-            />
-            <Button
-              cssclass="warning"
-              text="Cancel"
-              onClick={event => {
-                event.preventDefault();
-                toggleEdit(item.id);
-              }}
-            />
-          </td>
-        );
-      }
-
-      tableContent.push(
-        <tr key={i}>
-          {tableRow}
-          {actionButtons}
-        </tr>
-      );
-    });
-
-    let addRowInputs = [];
-    headers.forEach((item, i) => {
-      let tableData;
-      switch (item.toLowerCase()) {
-        case "id":
-          tableData = "❔";
-          break;
-        default:
-          tableData = (
-            <Input
-              name={item}
-              type={item.toLowerCase() === "image" ? "file" : undefined}
-              form="addRow"
-              disabled={Object.values(editing).includes(true)}
-            />
-          );
-      }
-      addRowInputs.push(<td key={i}>{tableData}</td>);
-    });
-
-    let addButtons = [];
-    addButtons.push(
-      <td key={0}>
-        <Button
-          key={"add"}
-          text="Add"
-          cssclass="accept"
-          type="submit"
-          form="addRow"
-          disabled={Object.values(editing).includes(true)}
-        />
-        <Button
-          key={"clear"}
-          text="Clear"
-          cssclass="warning"
-          type="reset"
-          form="addRow"
-          disabled={Object.values(editing).includes(true)}
-        />
-      </td>
-    );
-
-    tableContent.push(
-      <tr key={props.json.rows.length + 1}>
-        {addRowInputs}
-        {addButtons}
-      </tr>
-    );
+      tableContent.push(<tr key={rowIndex}>{newRow}</tr>);
+    }
   }
 
   return (
@@ -203,10 +117,27 @@ function Table(props) {
           let currentID = itemIDs.filter(id => {
             return editing[id];
           });
-          props.edit(event, currentID[0]);
+          handleSubmission(
+            event,
+            "PATCH",
+            `http://localhost:9001/${props.route}/${currentID[0]}`
+          ).then(result => {
+            updateDataSource();
+          });
         }}
       />
-      <Form id="addRow" onSubmit={props.add} />
+      <Form
+        id="addRow"
+        onSubmit={event => {
+          handleSubmission(
+            event,
+            "POST",
+            `http://localhost:9001/${props.route}/new`
+          ).then(result => {
+            updateDataSource();
+          });
+        }}
+      />
       <table>
         <thead>
           <tr>{tableHeader}</tr>
