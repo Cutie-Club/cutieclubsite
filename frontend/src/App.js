@@ -24,11 +24,7 @@ function App() {
         <Route path="/admin" component={Admin} />
         <Route path="/" component={Home} />
       </Switch>
-
-      <Footer
-        repo="https://github.com/amberstarlight/cutieclubsite"
-        json={footerJSON}
-      />
+      <Footer json={footerJSON} />
     </Router>
   );
 }

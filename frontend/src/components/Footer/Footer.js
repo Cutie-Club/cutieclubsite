@@ -11,15 +11,13 @@ const randomItem = array => {
 };
 
 function Footer(props) {
-  const phrase = randomItem(props.json.phrases);
-
   return (
     <footer>
       <div className="container">
         <img src={roundel} alt="Cutie Club" />
         <div className="wrapper">
           <div className="left">
-            <h2>{phrase}</h2>
+            <h2>{randomItem(props.json.phrases)}</h2>
             <p>&copy; {new Date().getFullYear()} Cutie Club</p>
             <p>
               licensed under the{" "}
@@ -28,7 +26,7 @@ function Footer(props) {
               </a>
             </p>
             <p>
-              why not <a href={props.repo}>contribute</a>?
+              why not <a href={props.json.repo}>contribute</a>?
             </p>
             <Button
               text="back to top ↑ "
