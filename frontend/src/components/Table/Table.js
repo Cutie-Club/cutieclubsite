@@ -13,7 +13,7 @@ function Table(props) {
 
   // declare helper functions
   const updateDataSource = () => {
-    fetch(`http://localhost:9001/${props.route}`, { method: "GET" })
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/${props.route}`, { method: "GET" })
       .then(response => response.json())
       .then(data => {
         setData(data);
@@ -120,7 +120,7 @@ function Table(props) {
           handleSubmission(
             event,
             "PATCH",
-            `http://localhost:9001/${props.route}/${currentID[0]}`
+            `${process.env.REACT_APP_BACKEND_URL}/${props.route}/${currentID[0]}`
           ).then(result => {
             updateDataSource();
           });
@@ -132,7 +132,7 @@ function Table(props) {
           handleSubmission(
             event,
             "POST",
-            `http://localhost:9001/${props.route}/new`
+            `${process.env.REACT_APP_BACKEND_URL}/${props.route}/new`
           ).then(result => {
             updateDataSource();
           });

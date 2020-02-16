@@ -5,7 +5,7 @@ function Products(props) {
   const [products, setProducts] = useState();
 
   const updateProducts = () => {
-    fetch(`http://localhost:9001/products`, { method: "GET" })
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/products`, { method: "GET" })
       .then(response => response.json())
       .then(data => {
         setProducts(data);
