@@ -23,9 +23,15 @@ html {
 html,
 body {
   font-size: 18px;
+  line-height: 1.6;
+  scroll-behavior: smooth;
 }
 
 .product-grid {
   display: flex;
   flex-flow: row wrap;
+}
+
+a {
+  text-decoration: none;
 }

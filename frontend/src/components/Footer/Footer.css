@@ -1,0 +1,58 @@
+footer {
+  background-color: #a5f5d6;
+  padding: 0 12.5em;
+  margin-top: 5em;
+  display: flex;
+  height: 100vh;
+}
+
+footer a {
+  color: #ff77bb;
+  transition: 0.2s all ease;
+  font-weight: bold;
+}
+
+footer a:visited {
+  color: #ff77bb;
+}
+
+footer a:hover {
+  background-color: #ff77bb;
+  color: white;
+}
+
+footer img {
+  width: 8em;
+  margin-left: -1em;
+}
+
+.container {
+  margin: 5em auto;
+  padding: 0 2em;
+}
+
+.wrapper {
+  margin-top: 3em;
+  display: flex;
+}
+
+.wrapper .left {
+  font-size: 0.8em;
+  margin-right: 5em;
+  width: 35em;
+}
+
+.wrapper .left :last-child {
+  margin-top: 2em;
+}
+
+.wrapper .right div:last-child {
+  margin-top: 5em;
+}
+
+.wrapper .right .big {
+  margin-top: 0;
+  font-size: 2em;
+  letter-spacing: -0.05em;
+  font-weight: 200;
+}

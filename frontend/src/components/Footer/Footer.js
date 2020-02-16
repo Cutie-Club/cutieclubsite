@@ -1,0 +1,60 @@
+import React from "react";
+import Form from "../Form/Form.js";
+import Input from "../Input/Input.js";
+import Button from "../Button/Button.js";
+import "./Footer.css";
+
+import roundel from "../../res/logo_stamp.svg";
+
+const randomItem = array => {
+  return array[Math.floor(Math.random() * array.length)];
+};
+
+function Footer(props) {
+  const phrase = randomItem(props.json.phrases);
+
+  return (
+    <footer>
+      <div className="container">
+        <img src={roundel} alt="Cutie Club" />
+        <div className="wrapper">
+          <div className="left">
+            <h2>{phrase}</h2>
+            <p>&copy; {new Date().getFullYear()} Cutie Club</p>
+            <p>
+              licensed under the{" "}
+              <a href="https://www.apache.org/licenses/LICENSE-2.0">
+                Apache License, Version 2.0
+              </a>
+            </p>
+            <p>
+              why not <a href={props.repo}>contribute</a>?
+            </p>
+            <Button
+              text="back to top ↑ "
+              className="icon"
+              onClick={() => window.scrollTo(0, 0)}
+            />
+          </div>
+
+          <div className="right">
+            <p className="big">{props.json.title}</p>
+            <p>{props.json.body}</p>
+            <small>{props.json.subtext}</small>
+            {/* TODO: make reusable social icons component to replace email link*/}
+            <p>email link yay</p>
+            <div>
+              <p>Didn't find what you were looking for?</p>
+              <Form action="/products">
+                <Input label="Product Finder:" type="search" name="query" />
+                <Button type="submit" text="Search" className="btn primary" />
+              </Form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+export default Footer;
