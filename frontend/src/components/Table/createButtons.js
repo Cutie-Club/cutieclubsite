@@ -5,9 +5,14 @@ function createNormalButtons(updateDataSource, toggleEdit, editing, id, route) {
   if (editing[id]) {
     return (
       <>
-        <Button cssclass="accept" type="submit" text="Save" form="editedRow" />
         <Button
-          cssclass="warning"
+          cssclass="btn accept"
+          type="submit"
+          text="Save"
+          form="editedRow"
+        />
+        <Button
+          cssclass="btn warning"
           text="Cancel"
           onClick={event => {
             event.preventDefault();
@@ -22,7 +27,7 @@ function createNormalButtons(updateDataSource, toggleEdit, editing, id, route) {
     <>
       <Button
         text="Edit"
-        cssclass="primary"
+        cssclass="btn primary"
         disabled={Object.values(editing).includes(true)}
         onClick={event => {
           event.preventDefault();
@@ -31,7 +36,7 @@ function createNormalButtons(updateDataSource, toggleEdit, editing, id, route) {
       />
       <Button
         text="Delete"
-        cssclass="danger"
+        cssclass="btn danger"
         disabled={Object.values(editing).includes(true)}
         onClick={event => {
           event.preventDefault();
@@ -52,7 +57,7 @@ function createAddButtons(editing) {
       <Button
         key={"add"}
         text="Add"
-        cssclass="accept"
+        cssclass="btn accept"
         type="submit"
         form="addRow"
         disabled={Object.values(editing).includes(true)}
@@ -60,7 +65,7 @@ function createAddButtons(editing) {
       <Button
         key={"clear"}
         text="Clear"
-        cssclass="warning"
+        cssclass="btn warning"
         type="reset"
         form="addRow"
         disabled={Object.values(editing).includes(true)}
