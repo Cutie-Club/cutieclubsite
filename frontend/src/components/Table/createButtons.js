@@ -35,7 +35,7 @@ function createNormalButtons(updateDataSource, toggleEdit, editing, id, route) {
         disabled={Object.values(editing).includes(true)}
         onClick={event => {
           event.preventDefault();
-          fetch(`http://localhost:9001/${route}/${id}`, {
+          fetch(`${process.env.REACT_APP_BACKEND_URL}/${route}/${id}`, {
             method: "DELETE"
           }).then(result => {
             updateDataSource();
