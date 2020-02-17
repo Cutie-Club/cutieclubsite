@@ -67,15 +67,12 @@ function Table(props) {
         switch (columnName.toLowerCase()) {
           case "image":
             if (rowIndex !== data.rows.length) {
-              cellContent = (
+              cellContent = [
                 <img src={currentRow[columnName]} alt={currentRow.name} />
-              );
+              ];
               if (editing[currentRow.id]) {
-                cellContent = (
-                  <>
-                    <img src={currentRow[columnName]} alt={currentRow.name} />
-                    <Input name={columnName} type="file" form="editedRow" />
-                  </>
+                cellContent.push(
+                  <Input name={columnName} type="file" form="editedRow" />
                 );
               }
             }
