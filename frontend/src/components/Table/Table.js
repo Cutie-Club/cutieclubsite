@@ -13,7 +13,9 @@ function Table(props) {
 
   // declare helper functions
   const updateDataSource = () => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/${props.route}`, { method: "GET" })
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/${props.route}`, {
+      method: "GET"
+    })
       .then(response => response.json())
       .then(data => {
         setData(data);
@@ -68,6 +70,14 @@ function Table(props) {
               cellContent = (
                 <img src={currentRow[columnName]} alt={currentRow.name} />
               );
+              if (editing[currentRow.id]) {
+                cellContent = (
+                  <>
+                    <img src={currentRow[columnName]} alt={currentRow.name} />
+                    <Input name={columnName} type="file" form="editedRow" />
+                  </>
+                );
+              }
             }
             break;
           case "actions":
@@ -120,7 +130,9 @@ function Table(props) {
           handleSubmission(
             event,
             "PATCH",
-            `${process.env.REACT_APP_BACKEND_URL}/${props.route}/${currentID[0]}`
+            `${process.env.REACT_APP_BACKEND_URL}/${props.route}/${
+              currentID[0]
+            }`
           ).then(result => {
             updateDataSource();
           });
