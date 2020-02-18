@@ -18,7 +18,9 @@
   "scripts": {
     "db:start": "sudo systemctl start mariadb",
     "dev:backend": "cd backend/ && yarn dev:start",
-    "dev:frontend": "cd frontend/ && yarn start"
+    "dev:frontend": "cd frontend/ && yarn start",
+    "lint:frontend": "npx eslint frontend/",
+    "lint:backend": "npx eslint backend/"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
@@ -27,7 +29,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "echo hello"
+      "pre-commit": "yarn lint:*"
     }
   }
 }

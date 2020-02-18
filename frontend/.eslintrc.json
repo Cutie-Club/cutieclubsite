@@ -16,7 +16,13 @@
     "sourceType": "module"
   },
   "plugins": ["react"],
+  "ignorePatterns": ["node_modules/"],
+	"settings": {
+		"react": {
+			"version":"detect"
+		}
+	},
   "rules": {
-    "no-console": { "allow": ["warn", "error"] }
+    "no-console": ["error", { "allow": ["warn", "error"] }]
   }
 }
