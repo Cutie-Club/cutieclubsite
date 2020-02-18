@@ -17,6 +17,17 @@
   "private": true,
   "scripts": {
     "db:start": "sudo systemctl start mariadb",
-    "dev:start": "(cd backend && yarn dev:start) & (cd frontend && yarn start)"
+    "dev:backend": "cd backend/ && yarn dev:start",
+    "dev:frontend": "cd frontend/ && yarn start"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-plugin-react": "^7.18.3",
+    "husky": "^4.2.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "echo hello"
+    }
   }
 }
