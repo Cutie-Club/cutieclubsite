@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ProductCard from "../components/ProductCard/ProductCard.js";
 
-function Products(props) {
+function Products() {
   const [products, setProducts] = useState();
 
   const updateProducts = () => {

@@ -6,6 +6,7 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+.directory
 
 # Dependencies
 node_modules

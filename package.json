@@ -17,6 +17,19 @@
   "private": true,
   "scripts": {
     "db:start": "sudo systemctl start mariadb",
-    "dev:start": "(cd backend && yarn dev:start) & (cd frontend && yarn start)"
+    "dev:backend": "cd backend/ && yarn dev:start",
+    "dev:frontend": "cd frontend/ && yarn start",
+    "lint:frontend": "cd frontend/ && npx eslint ./src/**/*.js",
+    "lint:backend": "cd backend/ && npx eslint ./"
+  },
+  "devDependencies": {
+    "pre-commit": "^1.2.2"
+  },
+  "pre-commit": {
+    "silent": false,
+    "run": [
+      "lint:frontend",
+      "lint:backend"
+    ]
   }
 }

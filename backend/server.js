@@ -108,7 +108,7 @@ app.use(express.static("public")); // public file folder
 
 // server routes
 app.post("/products", upload.none(), (req, res) => {
-  searchQuery = req.body.query;
+  let searchQuery = req.body.query;
   pool
     .query("SELECT * FROM products WHERE SOUNDEX(name) = SOUNDEX( ? )", [
       searchQuery
@@ -153,7 +153,7 @@ app.post("/products/new", upload.single("image"), (req, res) => {
 
   let keyList = "";
   let valueList = "";
-  Object.entries(req.body).forEach(([key, value], index) => {
+  Object.entries(req.body).forEach(([key, value]) => {
     keyList += `${key}, `;
     valueList += `"${value}", `;
   });
