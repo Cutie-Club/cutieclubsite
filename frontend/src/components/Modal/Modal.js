@@ -1,34 +1,33 @@
 import React, { useState } from "react";
 import Button from "../Button/Button.js";
-import Input from "../Input/Input.js";
 
 import "./Modal.css";
 
 function Modal(props) {
   const [active, setActive] = useState(props.startActive || false);
-  return (
+  let modalDOM = (
     <>
-      <div className={active ? "" : "closed"}>
-        <div className="modal-overlay" />
-        <div className="modal">
-          <div className="modal-content">
+      <div className="modal-overlay" />
+      <div className="modal">
+        <div className="modal-content">
+          <div className="modal-header">
+            <p>Cool Modal Component</p>
             <Button
-              id="modal-close"
-              text="✖️"
+              className="btn"
+              text="close"
               onClick={() => setActive(false)}
             />
-            <p>
-              hi, it looks like you're trying to log in... <br /> we need some
-              credentials please guv
-            </p>
-            <Input placeholder="Username" />
-            <Input placeholder="Password" type="password" />
-            <Button text="Login" />
+          </div>
+          <div className="modal-child-content">{props.children}</div>
+          <div className="modal-footer">
+            <Button text="TEST" className="btn" />
+            <Button text="TEST" className="btn" />
           </div>
         </div>
       </div>
     </>
   );
+  return active ? modalDOM : <></>;
 }
 
 export default Modal;
