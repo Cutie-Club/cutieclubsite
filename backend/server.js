@@ -22,7 +22,6 @@ const upload = multer({
   storage: storage,
   fileFilter: function(req, file, cb) {
     let fileExt = file.mimetype.split("/")[1];
-    console.log(fileExt);
     if (!uploadConfig.validExts.includes(fileExt)) {
       cb(null, false);
     } else {
@@ -45,9 +44,6 @@ pool
 const dbExecute = (sql, args = []) => {
   pool
     .query(sql, args)
-    .then(columns => {
-      console.log(columns);
-    })
     .catch(err => {
       console.error(err);
     });
@@ -64,8 +60,7 @@ dbExecute(
     code TEXT NOT NULL,
     blurb TEXT NOT NULL,
 		image TEXT NOT NULL
-	)
-  `
+	)`
 );
 
 // create table for a product family
@@ -107,100 +102,7 @@ app.use(cors()); // allow cross origin resource sharing (probs turn off in prod)
 app.use(express.static("public")); // public file folder
 
 // server routes
-app.post("/products", upload.none(), (req, res) => {
-  let searchQuery = req.body.query;
-  pool
-    .query("SELECT * FROM products WHERE SOUNDEX(name) = SOUNDEX( ? )", [
-      searchQuery
-    ])
-    .then(columns => {
-      columns.forEach(item => {
-        res.json(item);
-      });
-    })
-    .catch(err => {
-      console.error(err);
-    });
-});
-
-app.get("/products", upload.none(), (req, res) => {
-  pool
-    .query("SELECT * FROM products")
-    .then(queryResult => {
-      let newJSON = { rows: queryResult };
-      res.json(newJSON);
-    })
-    .catch(err => {
-      console.error(err);
-    });
-});
-
-app.delete("/products/:id", upload.none(), (req, res) => {
-  pool
-    .query("DELETE FROM products WHERE id = (?)", [req.params.id])
-    .then(queryResult => {
-      res.json(queryResult);
-    })
-    .catch(err => {
-      console.error(err);
-    });
-});
-
-app.post("/products/new", upload.single("image"), (req, res) => {
-  if (!req.file) {
-    throw new Error("File not passed");
-  }
-
-  let keyList = "";
-  let valueList = "";
-  Object.entries(req.body).forEach(([key, value]) => {
-    keyList += `${key}, `;
-    valueList += `"${value}", `;
-  });
-
-  const url = "http://" + req.get("host");
-  keyList += `image`;
-  valueList += `"${url}/${req.file.filename}"`;
-
-  let sqlQuery = `INSERT IGNORE INTO products (${keyList}) VALUES (${valueList})`;
-  pool
-    .query(sqlQuery)
-    .then(queryResult => {
-      res.json(queryResult);
-    })
-    .catch(err => {
-      console.error(err);
-    });
-});
-
-app.patch("/products/:id", upload.single("image"), (req, res) => {
-  let newData = req.body;
-  if (req.file) {
-    console.log("file uploaded");
-    newData.image = `http://${req.get("host")}/${req.file.filename}`;
-  }
-
-  console.log(newData);
-
-  let sqlQuery = "UPDATE products SET ";
-  Object.entries(newData).forEach(([key, value], index) => {
-    sqlQuery += `${key} = "${value}"`;
-    if (index !== Object.keys(req.body).length - 1) {
-      sqlQuery += ", ";
-    }
-  });
-  sqlQuery += ` WHERE id = "${req.params.id}"`;
-
-  console.log(sqlQuery);
-  pool
-    .query(sqlQuery)
-    .then(queryResult => {
-      res.json(queryResult);
-    })
-    .catch(err => {
-      console.error(err);
-    });
-});
+const products = require('./routes/products.js')(app, upload, pool);
 
 // server start
 app.listen(port, () =>
