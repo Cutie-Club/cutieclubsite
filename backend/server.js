@@ -64,10 +64,9 @@ db.create("BRDF", [
 	"timestamp DATETIME"
 ]);
 
-db.create("products", [
+db.create("product_images", [
 	"product_id INTEGER NOT NULL",
-  "code TEXT NOT NULL",
-  "location TEXT NOT NULL",
+	"location TEXT NOT NULL",
 	"FOREIGN KEY (product_id) REFERENCES products(id)"
 ]);
 

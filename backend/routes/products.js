@@ -29,7 +29,16 @@ module.exports = (app, upload, db) => {
 		newBody["image"] = `${url}/${req.file.filename}`;
 
 		products.create(newBody).then(item => {
-			res.json(item);
+			db.create(req.body.code, [
+				"version INTEGER NOT NULL",
+				"batch INTEGER NOT NULL",
+				"serial_id INTEGER NOT NULL",
+				"image TEXT NOT NULL",
+				"information TEXT",
+				"timestamp DATETIME",
+			]).then(() => {
+				res.json(item);
+			})
 		});
 	});
 
