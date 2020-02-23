@@ -2,7 +2,8 @@
   "env": {
     "browser": true,
     "es6": true,
-		"node": true
+		"node": true,
+		"jest": true
   },
   "extends": ["eslint:recommended", "plugin:react/recommended"],
   "globals": {
@@ -23,8 +24,14 @@
 			"version":"latest"
 		}
 	},
-  "ignorePatterns": ["node_modules/"],
+  "ignorePatterns": ["node_modules/", "serviceWorker.js"],
   "rules": {
-    "no-console": ["error", { "allow": ["warn", "error"] }]
+		"indent": ["error", 2],
+		"no-console": [
+			"error", {"allow": ["warn", "error"]}
+		],
+		"no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
+    "no-var": "error",
+    "object-curly-spacing": ["error", "always"]
   }
 }

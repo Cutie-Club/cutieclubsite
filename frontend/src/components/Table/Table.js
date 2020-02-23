@@ -65,48 +65,48 @@ function Table(props) {
           />
         );
         switch (columnName.toLowerCase()) {
-          case "image":
-            if (rowIndex !== data.rows.length) {
-              cellContent = [
-                <img src={currentRow[columnName]} alt={currentRow.name} />
-              ];
-              if (editing[currentRow.id]) {
-                cellContent.push(
-                  <Input name={columnName} type="file" form="editedRow" />
-                );
-              }
+        case "image":
+          if (rowIndex !== data.rows.length) {
+            cellContent = [
+              <img src={currentRow[columnName]} alt={currentRow.name} />
+            ];
+            if (editing[currentRow.id]) {
+              cellContent.push(
+                <Input name={columnName} type="file" form="editedRow" />
+              );
             }
-            break;
-          case "actions":
-            cellContent = createButtons(
-              updateDataSource,
-              toggleEdit,
-              editing,
-              currentRow,
-              props.route
-            );
-            break;
-          case "id":
-            if (rowIndex !== data.rows.length) {
-              cellContent = currentRow[columnName] || "❔";
-            } else {
-              cellContent = "🆕";
+          }
+          break;
+        case "actions":
+          cellContent = createButtons(
+            updateDataSource,
+            toggleEdit,
+            editing,
+            currentRow,
+            props.route
+          );
+          break;
+        case "id":
+          if (rowIndex !== data.rows.length) {
+            cellContent = currentRow[columnName] || "❔";
+          } else {
+            cellContent = "🆕";
+          }
+          break;
+        default:
+          if (rowIndex !== data.rows.length) {
+            cellContent = currentRow[columnName] || "❔";
+            if (editing[currentRow.id]) {
+              cellContent = (
+                <Input
+                  name={columnName}
+                  required={true}
+                  initialValue={currentRow[columnName]}
+                  form="editedRow"
+                />
+              );
             }
-            break;
-          default:
-            if (rowIndex !== data.rows.length) {
-              cellContent = currentRow[columnName] || "❔";
-              if (editing[currentRow.id]) {
-                cellContent = (
-                  <Input
-                    name={columnName}
-                    required={true}
-                    initialValue={currentRow[columnName]}
-                    form="editedRow"
-                  />
-                );
-              }
-            }
+          }
         }
 
         newRow.push(<td key={i}>{cellContent}</td>);

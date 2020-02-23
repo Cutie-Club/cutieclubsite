@@ -3,9 +3,9 @@ import "./Form.css";
 
 function Form(props) {
   return (
-    // form properties
-    // action (URL to process)
-    // method (HTTP method)
+  // form properties
+  // action (URL to process)
+  // method (HTTP method)
     <form
       // custom reset handler
       // when a form is reset, loop through elements in the form

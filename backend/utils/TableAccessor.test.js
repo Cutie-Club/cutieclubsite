@@ -57,8 +57,8 @@ describe("delete() executes correctly", () => {
   test("delete() calls _dbRequest with an SQL Query", () => {
     table.delete(id);
     expect(table.db._dbRequest).toHaveBeenCalledWith(
-			"DELETE FROM table WHERE id = (?)",
-			[id]
+      "DELETE FROM table WHERE id = (?)",
+      [id]
     );
   });
 });
@@ -67,8 +67,8 @@ describe("update() executes correctly", () => {
   test("update() calls _dbRequest with an SQL Query", () => {
     table.update(id, data);
     expect(table.db._dbRequest).toHaveBeenCalledWith(
-			"UPDATE table SET name = (?),description = (?) WHERE id = (?)",
-			["test","a test description", 7]
+      "UPDATE table SET name = (?),description = (?) WHERE id = (?)",
+      ["test","a test description", 7]
     );
   });
 });
@@ -79,7 +79,7 @@ describe("create() executes correctly", () => {
     expect(table.db._dbRequest).toHaveBeenCalledWith(
       "INSERT IGNORE INTO table (name,description) VALUES (?,?)",
       ["test","a test description"]
-      );
+    );
   });
 });
 
