@@ -32,6 +32,7 @@
 		],
 		"no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
     "no-var": "error",
-    "object-curly-spacing": ["error", "always"]
+    "object-curly-spacing": ["error", "always"],
+    "react/prop-types": 0
   }
 }

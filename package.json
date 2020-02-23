@@ -21,7 +21,7 @@
     "dev:frontend": "cd frontend/ && yarn start",
     "lint:frontend": "cd frontend/ && yarn eslint ./src/",
     "lint:backend": "cd backend/ && yarn eslint .",
-		"lint": "yarn lint:frontend && yarn lint:backend"
+    "lint": "yarn lint:frontend && yarn lint:backend"
   },
   "devDependencies": {
     "pre-commit": "^1.2.2"

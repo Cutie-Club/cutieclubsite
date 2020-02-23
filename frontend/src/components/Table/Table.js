@@ -68,7 +68,7 @@ function Table(props) {
         case "image":
           if (rowIndex !== data.rows.length) {
             cellContent = [
-              <img src={currentRow[columnName]} alt={currentRow.name} />
+              <img key={rowIndex} src={currentRow[columnName]} alt={currentRow.name} />
             ];
             if (editing[currentRow.id]) {
               cellContent.push(
@@ -130,7 +130,7 @@ function Table(props) {
             `${process.env.REACT_APP_BACKEND_URL}/${props.route}/${
               currentID[0]
             }`
-          ).then(result => {
+          ).then(() => {
             updateDataSource();
           });
         }}
@@ -142,7 +142,7 @@ function Table(props) {
             event,
             "POST",
             `${process.env.REACT_APP_BACKEND_URL}/${props.route}/new`
-          ).then(result => {
+          ).then(() => {
             updateDataSource();
           });
         }}
