@@ -14,14 +14,14 @@ let db;
 beforeEach(() => {
   mariadb.createPool.mockReturnValue({
     query: jest.fn(() => new Promise(resolve => {
-			resolve({ result: "test" });
-		}))
+      resolve({ result: "test" });
+    }))
   });
-	db = new dbAccessor(dbConfig);
+  db = new dbAccessor(dbConfig);
 });
 
 afterEach(() => {
-	jest.clearAllMocks();
+  jest.clearAllMocks();
 });
 
 describe("dbAccessor constructs correctly", () => {
@@ -47,31 +47,31 @@ describe("_dbRequest() executes correctly", () => {
 });
 
 describe("get() executes correctly", () => {
-	test("get() returns successfully", () => {
+  test("get() returns successfully", () => {
     jest.spyOn(db, "get");
     db.get("table");
     expect(db.get).toHaveReturnedTimes(1);
   })
 
-	test("get() returns a new TableAccessor", () => {
-		expect(db.get("table")).toBeInstanceOf(TableAccessor);
-	})
+  test("get() returns a new TableAccessor", () => {
+    expect(db.get("table")).toBeInstanceOf(TableAccessor);
+  })
 });
 
 describe("create() executes successfully", () => {
-	test("create() is called correctly", () => {
-		jest.spyOn(db, "_dbRequest");
-		db.create("table", ["test","fields","here"], false);
-		expect(db._dbRequest).toHaveBeenCalledWith(
-			"CREATE TABLE IF NOT EXISTS table (id INTEGER PRIMARY KEY AUTO_INCREMENT,test,fields,here)"
-		);
-	})
+  test("create() is called correctly", () => {
+    jest.spyOn(db, "_dbRequest");
+    db.create("table", ["test","fields","here"], false);
+    expect(db._dbRequest).toHaveBeenCalledWith(
+      "CREATE TABLE IF NOT EXISTS table (id INTEGER PRIMARY KEY AUTO_INCREMENT,test,fields,here)"
+    );
+  })
 });
 
 describe("delete() executes successfully", () => {
-	test("delete() is called correctly", () => {
-		jest.spyOn(db, "_dbRequest");
-		db.delete("table");
-		expect(db._dbRequest).toHaveBeenCalledWith("DROP TABLE table");
-	})
+  test("delete() is called correctly", () => {
+    jest.spyOn(db, "_dbRequest");
+    db.delete("table");
+    expect(db._dbRequest).toHaveBeenCalledWith("DROP TABLE table");
+  })
 });

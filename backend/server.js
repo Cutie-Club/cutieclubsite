@@ -48,50 +48,50 @@ app.listen(port, () =>
 
 // create table for products
 db.create("products", [
-	"name TEXT NOT NULL",
+  "name TEXT NOT NULL",
   "code TEXT NOT NULL",
   "blurb TEXT NOT NULL",
-	"image TEXT NOT NULL"
+  "image TEXT NOT NULL"
 ]);
 
 // create table for a product family
 db.create("BRDF", [
-	"version INTEGER NOT NULL",
+  "version INTEGER NOT NULL",
   "batch INTEGER NOT NULL",
   "serial_id INTEGER NOT NULL",
-	"image TEXT NOT NULL",
-	"information TEXT",
-	"timestamp DATETIME"
+  "image TEXT NOT NULL",
+  "information TEXT",
+  "timestamp DATETIME"
 ]);
 
 db.create("product_images", [
-	"product_id INTEGER NOT NULL",
-	"location TEXT NOT NULL",
-	"FOREIGN KEY (product_id) REFERENCES products(id)"
+  "product_id INTEGER NOT NULL",
+  "location TEXT NOT NULL",
+  "FOREIGN KEY (product_id) REFERENCES products(id)"
 ]);
 
 const products = db.get("products");
 
 products.create({
-	id: 1,
-	name: "Borsdorf",
-	code: "BRDF",
-	blurb: "66% Alps Keyboard",
-	image: "http://localhost:9001/borsdorf-1582360923172.jpeg"
+  id: 1,
+  name: "Borsdorf",
+  code: "BRDF",
+  blurb: "66% Alps Keyboard",
+  image: "http://localhost:9001/borsdorf-1582360923172.jpeg"
 });
 
 products.create({
-	id: 2,
-	name: "Donut",
-	code: "DNUT",
-	blurb: "My reallui cool round macro pad",
-	image: "http://localhost:9001/IMG_7925-1582359756755.jpeg"
+  id: 2,
+  name: "Donut",
+  code: "DNUT",
+  blurb: "My reallui cool round macro pad",
+  image: "http://localhost:9001/IMG_7925-1582359756755.jpeg"
 });
 
 products.create({
-	id: 3,
-	name: "Splixty",
-	code: "SPLT",
-	blurb: "60% split keeb",
-	image: "http://localhost:9001/hello-1582360938851.png"
+  id: 3,
+  name: "Splixty",
+  code: "SPLT",
+  blurb: "60% split keeb",
+  image: "http://localhost:9001/hello-1582360938851.png"
 });

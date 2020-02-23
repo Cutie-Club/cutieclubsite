@@ -42,7 +42,7 @@ function Footer(props) {
             {/* TODO: make reusable social icons component to replace email link*/}
             <p>email link yay</p>
             <div>
-              <p>Didn't find what you were looking for?</p>
+              <p>Didn&apos;t find what you were looking for?</p>
               <Form action="/products">
                 <Input label="Product Finder:" type="search" name="query" />
                 <Button type="submit" text="Search" className="btn primary" />

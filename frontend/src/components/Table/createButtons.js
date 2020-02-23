@@ -42,7 +42,7 @@ function createNormalButtons(updateDataSource, toggleEdit, editing, id, route) {
           event.preventDefault();
           fetch(`${process.env.REACT_APP_BACKEND_URL}/${route}/${id}`, {
             method: "DELETE"
-          }).then(result => {
+          }).then(() => {
             updateDataSource();
           });
         }}
