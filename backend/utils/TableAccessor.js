@@ -6,7 +6,7 @@ module.exports = class TableAccessor {
 
   get(column, value, limit=1) {
     return this.db._dbRequest(
-      `SELECT * FROM ${this.table} WHERE SOUNDEX(?) = SOUNDEX(?) LIMIT ?`,
+      `SELECT * FROM ${this.table} WHERE SOUNDEX(?) = SOUNDEX(?) LIMIT (?)`,
       [column, value, limit]
     );
   }
