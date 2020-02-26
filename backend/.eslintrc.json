@@ -1,7 +1,8 @@
 {
   "env": {
     "node": true,
-    "es6": true
+    "es6": true,
+		"jest": true
   },
   "extends": ["eslint:recommended"],
   "globals": {
@@ -14,6 +15,10 @@
   },
   "ignorePatterns": ["node_modules/"],
   "rules": {
-    "no-console": "off"
+		"indent": ["error", 2],
+    "no-console": "off",
+		"no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
+    "no-var": "error",
+    "object-curly-spacing": ["error", "always"]
 	}
 }

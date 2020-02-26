@@ -19,8 +19,9 @@
     "db:start": "sudo systemctl start mariadb",
     "dev:backend": "cd backend/ && yarn dev:start",
     "dev:frontend": "cd frontend/ && yarn start",
-    "lint:frontend": "cd frontend/ && npx eslint ./src/**/*.js",
-    "lint:backend": "cd backend/ && npx eslint ./"
+    "lint:frontend": "cd frontend/ && yarn eslint ./src/",
+    "lint:backend": "cd backend/ && yarn eslint .",
+    "lint": "yarn lint:frontend && yarn lint:backend"
   },
   "devDependencies": {
     "pre-commit": "^1.2.2"
