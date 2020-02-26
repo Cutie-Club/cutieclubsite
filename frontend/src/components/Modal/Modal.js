@@ -4,7 +4,24 @@ import Button from "../Button/Button.js";
 import "./Modal.css";
 
 function Modal(props) {
-  const [active, setActive] = useState(props.startActive || false);
+  const [activeState, setActiveState] = useState(props.startActive || false);
+
+  let externalState = false;
+  let active = activeState;
+  if (!(props.active === undefined)) {
+    externalState = true;
+    active = props.active;
+  }
+
+  let buttonDOM = [];
+
+  if (props.buttons) {
+    for (let buttonKey in props.buttons) {
+      let buttonValue = props.buttons[buttonKey];
+      buttonDOM.push(<Button key={buttonKey} text={buttonValue.text} className="btn" onClick={buttonValue.onClick} />);
+    }
+  }
+
   let modalDOM = (
     <>
       <div className="modal-overlay" />
@@ -15,13 +32,12 @@ function Modal(props) {
             <Button
               className="btn"
               text="close"
-              onClick={() => setActive(false)}
+              onClick={externalState ? props.onClose : () => setActiveState(false)}
             />
           </div>
           <div className="modal-child-content">{props.children}</div>
           <div className="modal-footer">
-            <Button text="TEST" className="btn" />
-            <Button text="TEST" className="btn" />
+            {buttonDOM}
           </div>
         </div>
       </div>

@@ -16,7 +16,3 @@ input.ui:active {
 .modal input.ui {
 	width: calc(50% - 1em);
 }
-
-input.ui::placeholder {
-	padding-left: .5em;
-}
