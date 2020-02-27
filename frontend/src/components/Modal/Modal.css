@@ -37,11 +37,7 @@
 .modal-header {
   display: flex;
   justify-content: space-between;
-}
-
-.modal-header p {
-  margin: auto 0;
-  font-weight: bold;
+  align-items: center;
 }
 
 .modal-footer {

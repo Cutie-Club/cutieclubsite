@@ -4,7 +4,7 @@ import Button from "../Button/Button.js";
 import "./Modal.css";
 
 function Modal(props) {
-  const [activeState, setActiveState] = useState(props.startActive || false);
+  const [activeState, setActiveState] = useState(props.startActive || true);
 
   let externalState = false;
   let active = activeState;
@@ -22,18 +22,23 @@ function Modal(props) {
     }
   }
 
+  let closeButton;
+  if (props.closable || props.closable === undefined) {
+    closeButton = <Button
+      className="btn"
+      text="close"
+      onClick={externalState ? props.onClose : () => setActiveState(false)}
+    />;
+  }
+
   let modalDOM = (
     <>
       <div className="modal-overlay" />
       <div className="modal">
         <div className="modal-content">
           <div className="modal-header">
-            <p>Cool Modal Component</p>
-            <Button
-              className="btn"
-              text="close"
-              onClick={externalState ? props.onClose : () => setActiveState(false)}
-            />
+            <h3>{props.title}</h3>
+            {closeButton}
           </div>
           <div className="modal-child-content">{props.children}</div>
           <div className="modal-footer">
