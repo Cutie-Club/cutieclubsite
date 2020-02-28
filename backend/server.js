@@ -37,6 +37,7 @@ app.use(cors()); // allow cross origin resource sharing (probs turn off in prod)
 app.use(express.static("public")); // public file folder
 
 // server routes
+require('./routes/root.js')(app, upload, db);
 require('./routes/products.js')(app, upload, db);
 
 // server start

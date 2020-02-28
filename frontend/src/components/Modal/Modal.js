@@ -18,7 +18,7 @@ function Modal(props) {
   if (props.buttons) {
     for (let buttonKey in props.buttons) {
       let buttonValue = props.buttons[buttonKey];
-      buttonDOM.push(<Button key={buttonKey} text={buttonValue.text} className="btn" onClick={buttonValue.onClick} />);
+      buttonDOM.push(<Button key={buttonKey} className="btn" {...buttonValue} />);
     }
   }
 
