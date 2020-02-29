@@ -35,3 +35,15 @@ body {
 a {
   text-decoration: none;
 }
+
+.login-form {
+  width: 35em;
+  max-width: 100%;
+  margin: auto;
+}
+
+.login-form form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}

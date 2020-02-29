@@ -5,6 +5,7 @@ import "./App.css";
 // pages
 import About from "./pages/About.js";
 import Admin from "./pages/Admin.js";
+import Login from "./pages/Login.js";
 import Products from "./pages/Products.js";
 
 // components
@@ -14,15 +15,22 @@ import Footer from "./components/Footer/Footer.js";
 
 const footerJSON = require("./res/footer.json");
 
+const pages = {
+  "/products": Products,
+  "/login": Login,
+  "/about": About,
+  "/admin": Admin,
+  "/": Home
+};
+
 function App() {
   return (
     <Router>
       <Navbar />
       <Switch>
-        <Route path="/products" component={Products} />
-        <Route path="/about" component={About} />
-        <Route path="/admin" component={Admin} />
-        <Route path="/" component={Home} />
+        {Object.entries(pages).map(([route, component]) =>
+          <Route key={route} path={route} component={component} />
+        )}
       </Switch>
       <Footer json={footerJSON} />
     </Router>
