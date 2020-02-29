@@ -71,6 +71,14 @@ db.create("product_images", [
   "FOREIGN KEY (product_id) REFERENCES products(id)"
 ]);
 
+db.create("users", [
+  "username TEXT NOT NULL UNIQUE",
+  "email TEXT NOT NULL UNIQUE",
+  "pw_hash TEXT NOT NULL",
+  "display_name TEXT",
+  "image TEXT"
+])
+
 const products = db.get("products");
 
 products.create({

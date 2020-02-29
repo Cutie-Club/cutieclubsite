@@ -39,4 +39,8 @@ module.exports = class dbAccessor {
       `DROP TABLE ${table}`
     )
   }
+
+  get warnings() {
+    return this._dbRequest("SHOW WARNINGS");
+  }
 };
