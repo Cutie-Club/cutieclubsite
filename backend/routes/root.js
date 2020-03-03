@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 const secretKey = "cutie club";
 const argon2 = require('argon2');
-
 const newToken = (id, username) =>
   jwt.sign({ id: id, user: username }, secretKey, {
     expiresIn: "1h"
@@ -19,7 +18,7 @@ const generateHash = (password) => {
 
 module.exports = (app, upload, db) => {
   const users = db.get("users");
-  app.post("/newuser", upload.single("image"), (req, res) => {
+  app.post("/newuser", upload.single("image"), async (req, res) => {
     const url = "http://" + req.get("host");
     // validate data
     // check it an email, maybe send an email to check it exists
@@ -32,46 +31,60 @@ module.exports = (app, upload, db) => {
       newBody["image"] = `${url}/${req.file.filename}`;
     }
 
-    generateHash(newBody.password).then(hash => {
-      newBody["pw_hash"] = hash;
-      delete newBody.password;
+    let hash = await generateHash(newBody.password);
+    newBody["pw_hash"] = hash;
+    delete newBody.password;
 
-      users.get("email", newBody.email).then(user => {
-        if (user[0]) {
-          console.log("tthois users aalreddi exists :/");
-          return res.send("EXISTS");
-        }
-        users.create(newBody).then(result => {
-          console.log(result);
-          return res.send(newToken(result.insertId, newBody.username));
-        });
+    let responseContent = {};
+    let user = await users.get("email", newBody.email);
+    if (user[0]) responseContent.email = true;
+
+    user = await users.get("username", newBody.username);
+    if (user[0]) responseContent.username = true;
+
+    if (responseContent.username || responseContent.email) {
+      res.status(409); // the request could not be processed because of conflict
+    } else {
+      users.create(newBody).then(result => {
+        res.status(201); // the creation of a new resource was successful
+        responseContent.token = newToken(result.insertId, newBody.username)
       });
-    });
+    }
+
+    return res.json(responseContent);
   });
 
-  // TODO:
-  // output from create/login
-  // {status: "success", data: "token"}
-  // {status: "error", data: "error message"}
-
-  app.post("/login", upload.none(), (req, res) => {
+  app.post("/login", upload.none(), async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    users.get("username", username).then(([user]) => {
-      if (!user) {
-        return console.warn(`no user found matching ${username}`);
-        // inform user that username wasn't found
-      }
-      argon2.verify(user.pw_hash, password).then((result) => {
+    let responseContent = {};
+    let user = await users.get("username", username);
+    if (!user[0]) responseContent.username = true;
+
+    if (responseContent.username) {
+      res.status(401); // incorrect credentials
+      res.setHeader('WWW-Authenticate', 'Basic realm="Access to user area"');
+    } else {
+      try {
+        let result = await argon2.verify(user[0].pw_hash, password);
+
         if (!result) {
-          return console.warn(`login failure for ${username}!`);
-          // to frontend: inform user of a layer 8 error
+          res.status(401); // incorrect credentials
+          res.setHeader('WWW-Authenticate', 'Basic realm="Access to user area"');
+        } else {
+          res.status(200); // OK!
+          console.log(`successful login for ${username}`);
+          responseContent.token = newToken(user.id, username);
         }
-        console.log(`successful login for ${username}`);
-        return res.send(newToken(user.id, username));
-      })
-    });
+      } catch (err) {
+        console.error(err);
+        res.status(500);
+        responseContent.error = true;
+      }
+    }
+
+    return res.json(responseContent);
   });
 
   app.post("/adminSecrets", upload.none(), (req, res) => {

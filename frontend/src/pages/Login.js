@@ -11,7 +11,6 @@ function getToken(){
   if (token) {
     return jwtDecode(token);
   } else {
-    console.error("RUH ROH NO TOKEN FOUND");
     return undefined;
   }
 }
@@ -63,9 +62,9 @@ function Login() {
             "POST",
             `${process.env.REACT_APP_BACKEND_URL}/${returningUser ? "login" : "newuser"}`
           ).then(res => {
-            res.text().then(data => {
-              setToken(jwtDecode(data));
-              sessionStorage.setItem('token', data);
+            res.json().then(data => {
+              setToken(jwtDecode(data.token));
+              sessionStorage.setItem('token', data.token);
             });
           });
         }}>
