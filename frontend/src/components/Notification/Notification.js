@@ -4,6 +4,7 @@ import "./Notification.css";
 
 function colourLookup(status) {
   const colourTable = {
+    error: "red",
     warning: "darkorange",
     danger: "crimson",
     success: "#4caf50"
@@ -23,8 +24,8 @@ function Notification(props) {
 
   if (active) {
     setTimeout(() => {
-      if(externalState) {
-        props.onTimeout();
+      if (externalState) {
+        if (props.onTimeout) props.onTimeout();
       } else {
         setActiveState(false);
       }

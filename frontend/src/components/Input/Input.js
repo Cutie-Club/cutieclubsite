@@ -21,10 +21,13 @@ function Input(props) {
   }
 
   return (
-    <label>
-      {props.label}
-      <input value={value} onChange={onChangeHandler} {...editedProps} />
-    </label>
+    <>
+      <label>
+        {props.label}
+        <input value={value} onChange={onChangeHandler} {...editedProps} />
+      </label>
+      {props.duplicate ? <p>{props.label} already exists</p> : undefined}
+    </>
   );
 }
 

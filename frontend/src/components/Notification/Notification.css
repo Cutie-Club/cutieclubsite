@@ -17,6 +17,10 @@
   box-shadow: 0 1em 2em 5px rgba(0,0,0,0.33);
 }
 
+.notification p {
+  margin-right: 1em;
+}
+
 .notification-status {
   height: 5px;
   width: 100%;

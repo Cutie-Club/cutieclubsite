@@ -58,13 +58,17 @@ module.exports = (app, upload, db) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    let responseContent = {};
-    let user = await users.get("username", username);
-    if (!user[0]) responseContent.username = true;
+    let responseContent = {
+      token: undefined,
+      error: false
+    };
 
-    if (responseContent.username) {
+    let user = await users.get("username", username);
+
+    if (!user[0]) {
       res.status(401); // incorrect credentials
       res.setHeader('WWW-Authenticate', 'Basic realm="Access to user area"');
+      responseContent.error = true;
     } else {
       try {
         let result = await argon2.verify(user[0].pw_hash, password);
@@ -72,6 +76,7 @@ module.exports = (app, upload, db) => {
         if (!result) {
           res.status(401); // incorrect credentials
           res.setHeader('WWW-Authenticate', 'Basic realm="Access to user area"');
+          responseContent.error = true;
         } else {
           res.status(200); // OK!
           console.log(`successful login for ${username}`);
