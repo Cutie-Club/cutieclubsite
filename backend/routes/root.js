@@ -1,14 +1,19 @@
 const jwt = require("jsonwebtoken");
-const secretKey = "cutie club";
-const argon2 = require('argon2');
-const newToken = (id, username) =>
-  jwt.sign({ id: id, user: username }, secretKey, {
+const argon2 = require("argon2");
+const secretKey = process.env.secretKey;
+const newToken = user =>
+  jwt.sign({
+    id: user.id,
+    username: user.username,
+    display_name: user.display_name,
+    admin: user.admin
+  }, secretKey, {
     expiresIn: "1h"
   });
 
-const generateHash = (password) => {
+const generateHash = password => {
   return argon2.hash(password, {
-    type: argon2.argon2id,
+    type: argon2.argon2id
     // memoryCost: 2 ** 16,
     // parallelism: 4,
     // hashLength: 64,
@@ -27,9 +32,7 @@ module.exports = (app, upload, db) => {
     // check username unique
     // run through file processer
     let newBody = { ...req.body };
-    if (req.file) {
-      newBody["image"] = `${url}/${req.file.filename}`;
-    }
+    if (req.file) newBody["image"] = `${url}/${req.file.filename}`;
 
     let hash = await generateHash(newBody.password);
     newBody["pw_hash"] = hash;
@@ -45,12 +48,16 @@ module.exports = (app, upload, db) => {
     if (responseContent.username || responseContent.email) {
       res.status(409); // the request could not be processed because of conflict
     } else {
-      users.create(newBody).then(result => {
-        res.status(201); // the creation of a new resource was successful
-        responseContent.token = newToken(result.insertId, newBody.username)
-      });
-    }
+      let dbState = await users.create(newBody);
 
+      res.status(201); // the creation of a new resource was successful
+      let user = {
+        id: dbState.insertId,
+        ...newBody,
+        admin: 0
+      };
+      responseContent.token = newToken(user);
+    }
     return res.json(responseContent);
   });
 
@@ -67,7 +74,7 @@ module.exports = (app, upload, db) => {
 
     if (!user[0]) {
       res.status(401); // incorrect credentials
-      res.setHeader('WWW-Authenticate', 'Basic realm="Access to user area"');
+      res.setHeader("WWW-Authenticate", 'Basic realm="Access to user area"');
       responseContent.error = true;
     } else {
       try {
@@ -75,12 +82,15 @@ module.exports = (app, upload, db) => {
 
         if (!result) {
           res.status(401); // incorrect credentials
-          res.setHeader('WWW-Authenticate', 'Basic realm="Access to user area"');
+          res.setHeader(
+            "WWW-Authenticate",
+            'Basic realm="Access to user area"'
+          );
           responseContent.error = true;
         } else {
           res.status(200); // OK!
           console.log(`successful login for ${username}`);
-          responseContent.token = newToken(user.id, username);
+          responseContent.token = newToken(user[0]);
         }
       } catch (err) {
         console.error(err);
@@ -88,14 +98,6 @@ module.exports = (app, upload, db) => {
         responseContent.error = true;
       }
     }
-
     return res.json(responseContent);
-  });
-
-  app.post("/adminSecrets", upload.none(), (req, res) => {
-    let token = req.headers.authorization.split(" ")[1];
-    let decodedToken = jwt.verify(token, secretKey);
-    console.log(decodedToken);
-    res.send("HELLO ADMIN");
   });
 };
