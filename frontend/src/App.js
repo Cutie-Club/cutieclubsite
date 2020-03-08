@@ -1,36 +1,44 @@
-import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import "./App.css";
-
-// pages
-import About from "./pages/About.js";
-import Admin from "./pages/Admin.js";
-import Login from "./pages/Login.js";
-import Products from "./pages/Products.js";
+import getToken from "./utils/getToken.js";
 
 // components
-import Home from "./pages/Home.js";
 import Navbar from "./components/Navbar/Navbar.js";
 import Footer from "./components/Footer/Footer.js";
+import Pages from "./Pages.js";
 
 const footerJSON = require("./res/footer.json");
 
-const pages = {
-  "/products": Products,
-  "/login": Login,
-  "/about": About,
-  "/admin": Admin,
-  "/": Home
-};
-
 function App() {
+  const [rawToken, setRawToken] = useState(getToken(true));
+  const [decodedToken, setDecodedToken] = useState(getToken());
+  let adminState = false;
+  if (decodedToken) adminState = decodedToken.admin;
+
+  const adminRedirect = (page) => {
+    if (page.admin && !adminState) return <Redirect to="/login" />;
+
+    return page.component({
+      rawToken: rawToken,
+      token: decodedToken,
+      setToken: setDecodedToken
+    });
+  }
+
+  useEffect(() => {
+    setRawToken(getToken(true));
+  }, [decodedToken]);
+
   return (
     <Router>
-      <Navbar />
+      <Navbar pages={Pages} admin={adminState} />
       <Switch>
-        {Object.entries(pages).map(([route, component]) =>
-          <Route key={route} path={route} component={component} />
-        )}
+        {Object.entries(Pages).map(([route, pageObject]) => (
+          <Route key={route} path={route}>
+            {adminRedirect(pageObject)}
+          </Route>
+        ))}
       </Switch>
       <Footer json={footerJSON} />
     </Router>

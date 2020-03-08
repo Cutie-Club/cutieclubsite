@@ -6,15 +6,6 @@ import Button from "../components/Button/Button.js";
 import handleSubmission from "../utils/handleSubmission.js";
 import * as jwtDecode from 'jwt-decode';
 
-function getToken(){
-  let token = sessionStorage.getItem('token');
-  if (token) {
-    return jwtDecode(token);
-  } else {
-    return undefined;
-  }
-}
-
 function returnCheck(state, jsx) {
   if (!state) {
     return jsx;
@@ -23,23 +14,22 @@ function returnCheck(state, jsx) {
   }
 }
 
-function Login() {
+function Login(props) {
   const [returningUser, setReturningUser] = useState(true);
-  const [token, setToken] = useState(getToken());
   const [errorNotif, setErrorNotif] = useState(undefined);
   const [failedLogin, setFailedLogin] = useState(false);
   const [invalidItems, setInvalidItems] = useState({});
 
-  if (token) {
+  if (props.token) {
     return(
       <>
-        <h1>{`HELLO ${token.user}`}</h1>
+        <h1>{`Hi, ${props.token.display_name || props.token.username}!`}</h1>
         <Button
           className="btn"
           text="logout"
           onClick={() => {
             sessionStorage.removeItem('token');
-            setToken(undefined);
+            props.setToken(undefined);
           }}
         />
       </>
@@ -50,7 +40,7 @@ function Login() {
     <>
       {errorNotif}
 
-      <h1>Please login to continue</h1>
+      <h1>Please login to continue...</h1>
       <div className="login-form">
         <h2>{returningUser ? "Login" : "Sign up"}</h2>
         <Form id="create-user-form" onSubmit={event => {
@@ -62,7 +52,7 @@ function Login() {
           ).then(res => {
             if (res.ok) {
               res.json().then(data => {
-                setToken(jwtDecode(data.token));
+                props.setToken(jwtDecode(data.token));
                 sessionStorage.setItem('token', data.token);
               });
             } else {

@@ -1,21 +1,17 @@
 import React from "react";
 import Table from "../components/Table/Table.js";
+import { Redirect } from "react-router-dom";
 
-function Admin() {
+function Admin(props) {
+  if (!props.token) return <Redirect to="/login" />;
+
   return (
     <>
-      <h1>hello [user]!</h1>
+      <h1>{`Hi, ${props.token.display_name || props.token.username}!`}</h1>
       <h3>Add product</h3>
-      <Table route="products" />
+      <Table route="products" rawToken={props.rawToken} />
     </>
   );
 }
 
 export default Admin;
-
-// check sessionStorage for a token
-// if token, user is logged in
-// if not, redirect to /login
-// is logged in user admin?
-// if yes, render admin page
-// if no, return "you are not authorised to view this content!"

@@ -11,11 +11,12 @@ function Table(props) {
   const [editing, setEditing] = useState(undefined);
   const [data, setData] = useState(undefined);
 
+  let requestOptions = { method: "GET" };
+  if (props.rawToken) requestOptions.headers = { 'Authorization': `Bearer ${props.rawToken}` }
+
   // declare helper functions
   const updateDataSource = () => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/${props.route}`, {
-      method: "GET"
-    })
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/${props.route}`, requestOptions)
       .then(response => response.json())
       .then(data => {
         setData(data);
@@ -129,7 +130,8 @@ function Table(props) {
             "PATCH",
             `${process.env.REACT_APP_BACKEND_URL}/${props.route}/${
               currentID[0]
-            }`
+            }`,
+            props.rawToken
           ).then(() => {
             updateDataSource();
           });
