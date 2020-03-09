@@ -1,4 +1,4 @@
-function handleSubmission(event, method, action, reset=true, rawToken) {
+function handleSubmission(event, method, action, rawToken, reset=true) {
   event.preventDefault();
   const HTMLForm = event.target;
   const form = new FormData(HTMLForm);
@@ -10,7 +10,7 @@ function handleSubmission(event, method, action, reset=true, rawToken) {
     body: form
   };
 
-  if(rawToken) requestOptions.headers = { 'Authorization': `Bearer ${rawToken}` }
+  if (rawToken) requestOptions.headers = { 'Authorization': `Bearer ${rawToken}` };
   return fetch(action, requestOptions)
 }
 

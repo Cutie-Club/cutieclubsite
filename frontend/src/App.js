@@ -13,22 +13,13 @@ const footerJSON = require("./res/footer.json");
 function App() {
   const [rawToken, setRawToken] = useState(getToken(true));
   const [decodedToken, setDecodedToken] = useState(getToken());
-  let adminState = false;
-  if (decodedToken) adminState = decodedToken.admin;
-
-  const adminRedirect = (page) => {
-    if (page.admin && !adminState) return <Redirect to="/login" />;
-
-    return page.component({
-      rawToken: rawToken,
-      token: decodedToken,
-      setToken: setDecodedToken
-    });
-  }
 
   useEffect(() => {
     setRawToken(getToken(true));
   }, [decodedToken]);
+
+  let adminState = false;
+  if (decodedToken) adminState = decodedToken.admin;
 
   return (
     <Router>
@@ -36,7 +27,14 @@ function App() {
       <Switch>
         {Object.entries(Pages).map(([route, pageObject]) => (
           <Route key={route} path={route}>
-            {adminRedirect(pageObject)}
+            {pageObject.admin && !adminState ?
+              <Redirect to="/login" />
+              :
+              <pageObject.component
+                rawToken={rawToken}
+                token={decodedToken}
+                setToken={setDecodedToken}
+              />}
           </Route>
         ))}
       </Switch>

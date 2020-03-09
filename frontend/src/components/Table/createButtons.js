@@ -82,7 +82,8 @@ function createButtons(
   toggleEdit,
   editing,
   currentRow,
-  route
+  route,
+  rawToken
 ) {
   if (!currentRow) {
     return createAddButtons(editing);
@@ -92,7 +93,8 @@ function createButtons(
       toggleEdit,
       editing,
       currentRow.id,
-      route
+      route,
+      rawToken
     );
   }
 }

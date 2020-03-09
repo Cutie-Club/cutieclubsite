@@ -48,6 +48,7 @@ function Login(props) {
             event,
             "POST",
             `${process.env.REACT_APP_BACKEND_URL}/${returningUser ? "login" : "newuser"}`,
+            undefined,
             returningUser
           ).then(res => {
             if (res.ok) {

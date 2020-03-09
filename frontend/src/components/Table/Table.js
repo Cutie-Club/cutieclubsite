@@ -73,7 +73,7 @@ function Table(props) {
             ];
             if (editing[currentRow.id]) {
               cellContent.push(
-                <Input name={columnName} type="file" form="editedRow" />
+                <Input key="fileUpload" name={columnName} type="file" form="editedRow" />
               );
             }
           }
@@ -84,7 +84,8 @@ function Table(props) {
             toggleEdit,
             editing,
             currentRow,
-            props.route
+            props.route,
+            props.rawToken
           );
           break;
         case "id":
@@ -128,9 +129,7 @@ function Table(props) {
           handleSubmission(
             event,
             "PATCH",
-            `${process.env.REACT_APP_BACKEND_URL}/${props.route}/${
-              currentID[0]
-            }`,
+            `${process.env.REACT_APP_BACKEND_URL}/${props.route}/${currentID[0]}`,
             props.rawToken
           ).then(() => {
             updateDataSource();
@@ -143,7 +142,8 @@ function Table(props) {
           handleSubmission(
             event,
             "POST",
-            `${process.env.REACT_APP_BACKEND_URL}/${props.route}/new`
+            `${process.env.REACT_APP_BACKEND_URL}/${props.route}/new`,
+            props.rawToken
           ).then(() => {
             updateDataSource();
           });
