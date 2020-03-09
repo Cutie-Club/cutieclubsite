@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const argon2 = require("argon2");
-const secretKey = process.env.secretKey;
+const { secretKey } = require('../config.json');
 const newToken = user =>
   jwt.sign({
     id: user.id,
