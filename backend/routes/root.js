@@ -25,12 +25,6 @@ module.exports = (app, upload, db) => {
   const users = db.get("users");
   app.post("/newuser", upload.single("image"), async (req, res) => {
     const url = "http://" + req.get("host");
-    // validate data
-    // check it an email, maybe send an email to check it exists
-    // check password meets requirements
-    // check email unique
-    // check username unique
-    // run through file processer
     let newBody = { ...req.body };
     if (req.file) newBody["image"] = `${url}/${req.file.filename}`;
 
