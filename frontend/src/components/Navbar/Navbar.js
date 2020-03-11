@@ -8,10 +8,9 @@ function Navbar(props) {
   const hiddenAdminFilter = keyValuePair => {
     let pageObject = keyValuePair[1];
     if (pageObject.hidden) return false;
-    if (!pageObject.admin) return true;
-    if (pageObject.admin && props.admin) return true;
-    return false;
-  };
+    if (pageObject.admin && !props.admin) return false;
+    return true;
+  }; 
 
   return (
     <div className="top-bar">
