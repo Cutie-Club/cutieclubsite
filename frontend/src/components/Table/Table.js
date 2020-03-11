@@ -11,11 +11,12 @@ function Table(props) {
   const [editing, setEditing] = useState(undefined);
   const [data, setData] = useState(undefined);
 
+  let requestOptions = { method: "GET" };
+  if (props.rawToken) requestOptions.headers = { 'Authorization': `Bearer ${props.rawToken}` }
+
   // declare helper functions
   const updateDataSource = () => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/${props.route}`, {
-      method: "GET"
-    })
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/${props.route}`, requestOptions)
       .then(response => response.json())
       .then(data => {
         setData(data);
@@ -72,7 +73,7 @@ function Table(props) {
             ];
             if (editing[currentRow.id]) {
               cellContent.push(
-                <Input name={columnName} type="file" form="editedRow" />
+                <Input key="fileUpload" name={columnName} type="file" form="editedRow" />
               );
             }
           }
@@ -83,7 +84,8 @@ function Table(props) {
             toggleEdit,
             editing,
             currentRow,
-            props.route
+            props.route,
+            props.rawToken
           );
           break;
         case "id":
@@ -127,9 +129,8 @@ function Table(props) {
           handleSubmission(
             event,
             "PATCH",
-            `${process.env.REACT_APP_BACKEND_URL}/${props.route}/${
-              currentID[0]
-            }`
+            `${process.env.REACT_APP_BACKEND_URL}/${props.route}/${currentID[0]}`,
+            props.rawToken
           ).then(() => {
             updateDataSource();
           });
@@ -141,7 +142,8 @@ function Table(props) {
           handleSubmission(
             event,
             "POST",
-            `${process.env.REACT_APP_BACKEND_URL}/${props.route}/new`
+            `${process.env.REACT_APP_BACKEND_URL}/${props.route}/new`,
+            props.rawToken
           ).then(() => {
             updateDataSource();
           });

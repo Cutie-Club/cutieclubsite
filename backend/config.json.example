@@ -7,5 +7,6 @@
 	}
   "uploadConfig": {
     "validExts": ["png", "jpg", "jpeg"]
-  }
+  },
+  "secretKey": "cutie club"
 }

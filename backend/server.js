@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const multer = require("multer");
 const cors = require("cors"); // cross origin resource sharing
 const dbAccessor = require("./utils/dbAccessor.js");
+const authentication = require("./utils/authLayer.js");
 
 const app = express();
 const port = 9001;
@@ -35,8 +36,9 @@ app.use(bodyParser.json()); // parse json bodies
 app.use(bodyParser.urlencoded({ extended: true })); // parse form bodies
 app.use(cors()); // allow cross origin resource sharing (probs turn off in prod)
 app.use(express.static("public")); // public file folder
-
+app.use(authentication);
 // server routes
+require('./routes/root.js')(app, upload, db);
 require('./routes/products.js')(app, upload, db);
 
 // server start
@@ -69,6 +71,15 @@ db.create("product_images", [
   "location TEXT NOT NULL",
   "FOREIGN KEY (product_id) REFERENCES products(id)"
 ]);
+
+db.create("users", [
+  "username TEXT NOT NULL UNIQUE",
+  "email TEXT NOT NULL UNIQUE",
+  "pw_hash TEXT NOT NULL",
+  "display_name TEXT",
+  "image TEXT",
+  "admin TINYINT(1) NOT NULL DEFAULT 0"
+])
 
 const products = db.get("products");
 

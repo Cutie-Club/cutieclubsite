@@ -4,22 +4,29 @@ import "./Navbar.css";
 
 import logo from "../../res/logo_simple.svg";
 
-function Navbar() {
+function Navbar(props) {
+  const hiddenAdminFilter = keyValuePair => {
+    let pageObject = keyValuePair[1];
+    if (pageObject.hidden) return false;
+    if (pageObject.admin && !props.admin) return false;
+    return true;
+  }; 
+
   return (
     <div className="top-bar">
       <NavLink activeClassName="active" exact to="/">
         <img src={logo} width={"200px"} alt="Cutie Club" />
       </NavLink>
       <nav className="menu-items">
-        <NavLink activeClassName="active" to="/products">
-          products
-        </NavLink>
-        <NavLink activeClassName="active" to="/about">
-          about
-        </NavLink>
-        <NavLink activeClassName="active" to="/admin">
-          admin
-        </NavLink>
+        {Object.entries(props.pages)
+          .filter(hiddenAdminFilter)
+          .map(([route, pageObject]) => {
+            return (
+              <NavLink key={route} activeClassName="active" to={route}>
+                {pageObject.text}
+              </NavLink>
+            );
+          })}
       </nav>
     </div>
   );

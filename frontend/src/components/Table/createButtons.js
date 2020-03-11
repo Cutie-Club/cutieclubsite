@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "../Button/Button.js";
 
-function createNormalButtons(updateDataSource, toggleEdit, editing, id, route) {
+function createNormalButtons(updateDataSource, toggleEdit, editing, id, route, rawToken) {
   if (editing[id]) {
     return (
       <>
@@ -40,11 +40,14 @@ function createNormalButtons(updateDataSource, toggleEdit, editing, id, route) {
         disabled={Object.values(editing).includes(true)}
         onClick={event => {
           event.preventDefault();
-          fetch(`${process.env.REACT_APP_BACKEND_URL}/${route}/${id}`, {
-            method: "DELETE"
-          }).then(() => {
-            updateDataSource();
-          });
+
+          let requestOptions = { method: "DELETE" };
+          if(rawToken) requestOptions.headers = { 'Authorization': `Bearer ${rawToken}` };
+
+          fetch(`${process.env.REACT_APP_BACKEND_URL}/${route}/${id}`, requestOptions)
+            .then(() => {
+              updateDataSource();
+            });
         }}
       />
     </>
@@ -79,7 +82,8 @@ function createButtons(
   toggleEdit,
   editing,
   currentRow,
-  route
+  route,
+  rawToken
 ) {
   if (!currentRow) {
     return createAddButtons(editing);
@@ -89,7 +93,8 @@ function createButtons(
       toggleEdit,
       editing,
       currentRow.id,
-      route
+      route,
+      rawToken
     );
   }
 }

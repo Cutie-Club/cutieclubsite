@@ -1,12 +1,12 @@
 import React from "react";
 import Table from "../components/Table/Table.js";
 
-function Admin() {
+function Admin(props) {
   return (
     <>
-      <h1>hello [user]!</h1>
+      <h1>{`Hi, ${props.token.display_name || props.token.username}!`}</h1>
       <h3>Add product</h3>
-      <Table route="products" />
+      <Table route="products" rawToken={props.rawToken} />
     </>
   );
 }
