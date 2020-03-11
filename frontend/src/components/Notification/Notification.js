@@ -22,8 +22,9 @@ function Notification(props) {
     active = props.active;
   }
 
-  let notifTimeout = () => {
-    setTimeout(() => {
+  let notifTimeout;
+  if (active) {
+    notifTimeout = setTimeout(() => {
       if (externalState) {
         if (props.onTimeout) props.onTimeout();
       } else {
@@ -31,8 +32,6 @@ function Notification(props) {
       }
     }, 7000);
   }
-
-  if (active) notifTimeout();
 
   let notifDOM = (
     <>
@@ -42,9 +41,13 @@ function Notification(props) {
           key={"notifClose"}
           text={"close"}
           className="btn"
-          onClick={externalState ? props.onClose : () => {
-            setActiveState(false);
+          onClick={() => {
             clearTimeout(notifTimeout);
+            if(externalState) {
+              props.onClose();
+            } else {
+              setActiveState(false);
+            }
           }}
         />
         <svg className="notification-status">
