@@ -14,7 +14,7 @@ module.exports = class dbAccessor {
           resolve(queryResult);
         })
         .catch(err => {
-          console.error(err);
+          log.error(err);
           reject(err);
         });
     });

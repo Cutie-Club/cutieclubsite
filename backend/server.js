@@ -1,3 +1,7 @@
+const loggerInit = require("./utils/logger.js");
+loggerInit();
+log.time("startup");
+
 const { dbConfig, uploadConfig } = require("./config.json");
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -42,11 +46,13 @@ require('./routes/root.js')(app, upload, db);
 require('./routes/products.js')(app, upload, db);
 
 // server start
-app.listen(port, () =>
-  console.log(
+app.listen(port, () => {
+  log.time("completed");
+  log.info(
     `being cute on the internet (port ${port}!) at ${new Date().toUTCString()}`
-  )
-);
+  );
+  log.timeBetween("startup", "completed");
+});
 
 // create table for products
 db.create("products", [
