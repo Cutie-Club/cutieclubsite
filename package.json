@@ -19,6 +19,7 @@
     "db:start": "sudo systemctl start mariadb",
     "dev:backend": "cd backend/ && yarn dev:start",
     "dev:frontend": "cd frontend/ && yarn start",
+    "prod:backend": "cd backend/ && yarn prod:start",
     "lint:frontend": "cd frontend/ && yarn eslint ./src/",
     "lint:backend": "cd backend/ && yarn eslint .",
     "lint": "yarn lint:frontend & yarn lint:backend"

@@ -54,8 +54,6 @@ app.listen(port, () => {
   log.timeBetween("startup", "completed");
 });
 
-
-
 // create table for products
 db.create("products", [
   "name TEXT NOT NULL",

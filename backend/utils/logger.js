@@ -11,7 +11,10 @@ const obs = new PerformanceObserver(list => { // listen for measurements
   );
 });
 
-obs.observe({ entryTypes: ['measure'], buffered: false });
+obs.observe({
+  entryTypes: ['measure'],
+  buffered: false
+});
 
 const timestamp = {
   time: () => {
@@ -56,6 +59,11 @@ const presets = {
     performance.measure(measurementName, start, end); // create measurement
   }
 };
+
+// disable debug logging if we're in prod
+if (process.env.NODE_ENV === "production") {
+  presets.debug = () => {};
+}
 
 const init = () => global.log = presets;
 module.exports = init;

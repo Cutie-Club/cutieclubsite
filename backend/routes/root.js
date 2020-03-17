@@ -83,7 +83,7 @@ module.exports = (app, upload, db) => {
           responseContent.error = true;
         } else {
           res.status(200); // OK!
-          log.info(`successful login for ${username}`);
+          log.debug(`successful login for ${username}`);
           responseContent.token = newToken(user[0]);
         }
       } catch (err) {
