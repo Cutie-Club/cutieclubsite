@@ -1,3 +1,5 @@
+const fs = require("fs");
+
 module.exports = (app, upload, db) => {
   const products = db.get("products");
 
@@ -36,8 +38,16 @@ module.exports = (app, upload, db) => {
     if (!req.file) throw new Error("File not passed");
     const url = "http://" + req.get("host");
 
+    fs.rename(req.file.path, `./public/${req.body.name}-thumb`, (err) => {
+      if (err) throw err
+      log.debug('Successfully renamed - AKA moved!')
+    })
+
+    // console.log(req.file);
+    log.debug(req.body.name);
+
     let newBody = { ...req.body };
-    newBody["image"] = `${url}/${req.file.filename}`;
+    newBody["image"] = `${url}/${req.body.name}-thumb`;
 
     products.create(newBody).then(item => {
       db.create(req.body.code, [

@@ -15,8 +15,8 @@ const port = 9001;
 const db = new dbAccessor(dbConfig);
 
 const storage = multer.diskStorage({
-  destination: "./public/",
-  filename: function(req, file, cb) {
+  destination: "./temp/uploads",
+  filename: (req, file, cb) => {
     let fileName = file.originalname.split(".", 1);
     let fileExt = file.mimetype.split("/")[1];
     cb(null, `${fileName}-${Date.now()}.${fileExt}`);
@@ -25,7 +25,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage: storage,
-  fileFilter: function(req, file, cb) {
+  fileFilter: (req, file, cb) => {
     let fileExt = file.mimetype.split("/")[1];
     if (!uploadConfig.validExts.includes(fileExt)) {
       cb(null, false);
@@ -35,15 +35,25 @@ const upload = multer({
   }
 });
 
+// files to host: 
+// images
+//    products
+//    users
+// BOMs
+// gerbers
+// firmwares
+
 // server middleware
 app.use(bodyParser.json()); // parse json bodies
 app.use(bodyParser.urlencoded({ extended: true })); // parse form bodies
 app.use(cors()); // allow cross origin resource sharing (probs turn off in prod)
 app.use(express.static("public")); // public file folder
 app.use(authentication);
+
 // server routes
 require('./routes/root.js')(app, upload, db);
 require('./routes/products.js')(app, upload, db);
+require('./routes/image.js')(app, upload, db);
 
 // server start
 app.listen(port, () => {
@@ -59,7 +69,8 @@ db.create("products", [
   "name TEXT NOT NULL",
   "code TEXT NOT NULL",
   "blurb TEXT NOT NULL",
-  "image TEXT NOT NULL"
+  "image TEXT NOT NULL",
+  "hidden TINYINT(1) NOT NULL DEFAULT 1"
 ]);
 
 // create table for a product family
@@ -72,10 +83,19 @@ db.create("BRDF", [
   "timestamp DATETIME"
 ]);
 
+db.create("images", [
+  "path TEXT NOT NULL UNIQUE", // path for image example: /images/keyboards/wraith.png
+  "name TEXT NOT NULL", // image name provided on the website
+  "description TEXT NOT NULL", // image description, alt-text / aria label
+  "hash TEXT NOT NULL", // image hash
+  "hidden TINYINT(1) NOT NULL DEFAULT 1" // hidden
+]);
+
 db.create("product_images", [
   "product_id INTEGER NOT NULL",
-  "location TEXT NOT NULL",
-  "FOREIGN KEY (product_id) REFERENCES products(id)"
+  "image_id INTEGER NOT NULL",
+  "FOREIGN KEY (product_id) REFERENCES products(id)",
+  "FOREIGN KEY (image_id) REFERENCES images(id)"
 ]);
 
 db.create("users", [
@@ -85,7 +105,10 @@ db.create("users", [
   "display_name TEXT",
   "image TEXT",
   "admin TINYINT(1) NOT NULL DEFAULT 0"
-])
+]);
+
+// TODO: create resources table
+// db.create("resources") 
 
 const products = db.get("products");
 
@@ -111,4 +134,29 @@ products.create({
   code: "SPLT",
   blurb: "60% split keeb",
   image: "http://localhost:9001/hello-1582360938851.png"
+});
+
+const images = db.get("images");
+images.create({
+  id: 1,
+  path: "/test.jpg",
+  description: "a test image",
+  hash: "1234",
+  hidden: 0
+});
+
+images.create({
+  id: 2,
+  path: "/test.png",
+  description: "a test image",
+  hash: "1234",
+  hidden: 0
+});
+
+images.create({
+  id: 3,
+  path: "/Example.png",
+  description: "a test image",
+  hash: "1234",
+  hidden: 0
 });
