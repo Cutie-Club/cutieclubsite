@@ -160,3 +160,33 @@ images.create({
   hash: "1234",
   hidden: 0
 });
+
+images.create({
+  id: 4,
+  path: "/hidden.png",
+  description: "a hidden image",
+  hash: "1234",
+  hidden: 1
+});
+
+const product_images = db.get("product_images");
+
+product_images.create({
+  id: 1,
+  product_id: 1,
+  image_id: 1
+});
+
+product_images.create({
+  id:2 ,
+  product_id: 1,
+  image_id: 3
+})
+
+product_images.create({
+  id: 3,
+  product_id: 1,
+  image_id: 4
+})
+
+product_images.get("product_id", 1, 100).then(console.log)

@@ -37,10 +37,10 @@ function Footer(props) {
 
           <div className="right">
             <p className="big">{props.json.title}</p>
-            <p>{props.json.body}</p>
+            <h3>{props.json.body}</h3>
             <small>{props.json.subtext}</small>
-            {/* TODO: make reusable social icons component to replace email link*/}
-            <p>email link yay</p>
+            <p>Get in touch with us:</p>
+            <a href="mailto:hello@cutieclub.cc">hello@cutieclub.cc</a>
             <div>
               <p>Didn&apos;t find what you were looking for?</p>
               <Form action="/products">
